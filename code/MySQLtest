@@ -12,6 +12,7 @@ create table goods(
 insert into goods values (0, 'xiaoxin','笔记本','联想',3999,default,default);
 insert into goods values (0, 'mac','笔记本','苹果',13999,default,default);
 insert into goods values (0, 'imac','台式机','苹果',23999,default,default);
+insert into goods values (0, 'GE63','游戏本','MSI',14999,default,default);
 
 
 select* from goods where cate_name = "超极本"
@@ -20,3 +21,34 @@ select name as 商品名称
 
 
  select round(avg(price),2) from goods;
+
+
+拆分表
+
+创建表
+create table if not exists goods_cates(
+    id int unsigned primary key auto_increment,
+    name varchar(40) not null
+);
+查询种类
+select cate_name from goods group by cate_name;
+
+将品牌插入goods_cates 表中，表头为 name
+
+insert into goods_cates (name) select cate_name from goods group by cate_name;
+同步表数据
+update goods as g inner join goods_cates as c on g.cate_name=c.name set g.cate_name=c.id;
+
+将goods表中的品牌id改成int
+alter table goods change cate_name cate_id int unsigned not null;
+修改成外键
+alter table goods add foreign key (cate_id) references goods_cates(id);
+
+
+
+create table if not exists goods_brands(
+    id int unsigned primary key auto_increment,
+    name varchar(40) not null
+);
+insert into goods_brands (name) select brand_name from goods group by brand_name;
+update goods as g inner join goods_brands as c on g.brand_name=c.name set g.brand_name=c.id;
