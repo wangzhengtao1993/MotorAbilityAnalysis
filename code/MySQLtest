@@ -1,0 +1,22 @@
+create table goods(
+    id int unsigned primary key auto_increment not null,
+    name varchar(150) not null,
+    cate_name varchar(40) not null,
+    brand_name varchar(40) not null,
+    price decimal(10,3) not null default 0,
+    is_show bit not null default 1,
+    is_saleoff bit not null default 0
+);
+
+
+insert into goods values (0, 'xiaoxin','笔记本','联想',3999,default,default);
+insert into goods values (0, 'mac','笔记本','苹果',13999,default,default);
+insert into goods values (0, 'imac','台式机','苹果',23999,default,default);
+
+
+select* from goods where cate_name = "超极本"
+
+select name as 商品名称
+
+
+ select round(avg(price),2) from goods;
