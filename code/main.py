@@ -2,7 +2,11 @@
 import pandas as pd
 import os
 import win32com.client as win32
-#win32api找不到时 pip install pywin32==225
+from numpy import *
+
+
+
+# win32api找不到时 pip install pywin32==225
 
 class EMGProcess(object):
 
@@ -10,6 +14,7 @@ class EMGProcess(object):
         self.header = 4  # 表头在第四行
         self.folder = folder  # 文件夹路径
         self.process_folder = self.folder + "\\Process\\"
+        self.win_set = (100,100)
         print("Path:", folder)
 
     def save_as_high_ver(self):
@@ -17,7 +22,7 @@ class EMGProcess(object):
         源文件格式错误，另存为xlsx
         """
         file_list = os.listdir(self.process_folder)
-        if len(file_list)>0:
+        if len(file_list) > 0:
             print("文件已转换")
         else:
             # 1.获得当前目录下所有文件名
@@ -48,31 +53,24 @@ class EMGProcess(object):
             else:
                 if keyword in file:
                     print(file)
-                    # data = pd.read_excel(self.process_folder + file, header=4)
                     data = self.read_emg(self.process_folder + file)
-                    print(data.columns)
                     print("新建肌电信号列")
                     for i in range(1, 7):
-                        colum = data[i]
-                        emg_mean = self.emg_mean(colum)
-                        if i == 3:
-
-                            data["EMG_3"] = (data[analog]-0.102)/2#除以500倍，×1000，mV
-                        else:
-                            EMG = ("EMG_" + str(i))
-                            analog = ("Analog_"+str(i))
-                            # data[EMG] = None
-                            data[EMG] = (data[analog]-emg_mean)/2#除以500倍，×1000，mV
+                        EMG = ("EMG_" + str(i))
+                        analog = ("Analog_" + str(i))
+                        column = data[analog]
+                        emg_mean = self.emg_mean(column)
+                        data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
 
                     print("新建RMS列")
                     for i in range(1, 7):
                         RMS = ("RMS_" + str(i))
                         data[RMS] = None
                     data = data.set_index("Frame")
-                    data.to_excel(self.process_folder+file)
+                    data.to_excel(self.process_folder + file)
         self.log_create("log")
 
-    def log_create(self,name):
+    def log_create(self, name):
         full_path = self.process_folder + name + '.txt'  # 也可以创建一个.doc的word文档
         file = open(full_path, 'w')
         file.write("新建列")
@@ -80,13 +78,67 @@ class EMGProcess(object):
     def read_emg(self, path):
         return pd.read_excel(path, header=self.header)
 
-    def emg_mean(self, column):
-
+    @staticmethod
+    def emg_mean(column):
+        return column.mean()
 
         pass
         # 1. 读取数据
         # emg_data  = read_emg()
         # 2. 新建sheet，除以倍率，analog_3归零
+
+    @staticmethod
+    def rect(raw):
+        return np.fabs(raw)
+
+    # 滑动时间窗
+    def slid_window(self, raw):
+        # 一次传入re_raw的一列
+        length = len(raw)
+        step = self.win_set[0]
+        width = self.win_set[1]
+        frame = int((length - width) / step + 1)  # 处理后的帧数
+        sw = zeros((frame, width), dtype=float)  # 初始化矩阵，每行是一个时间窗
+        i = 0
+        while i < length - width + 1:
+            # 每行新建空数组，作为window
+            window = array([])
+            for j in range(0, width):
+                # 每列从i添加到i+width
+                window = np.append(window, raw[i + j])
+            #生成sw矩阵
+            sw[int(i / step)] = window
+            i += step
+        return sw
+
+    # 均方根
+
+    def RMS(self, raw):
+        sw = self.slid_window(raw)
+        frame, width = shape(sw)
+        RMS = zeros((frame, 1), dtype=float)
+        for j in range(0, width):
+            rms_p = 0
+            for k in range(0, w):
+                rms_p = rms_p + sw[j][k] ** 2 # 平方和
+            RMS[j] = (rms_p / w) ** 0.5     # 开方
+        return RMS
+
+    def AEMG(self, re_raw):
+        l = len(re_raw)
+        s = self.win_set[0]
+        w = self.win_set[1]
+        c = int((l - w) / s + 1)  # 处理后的帧数
+        AEMG = zeros((c, 17), dtype=float)
+        for j in range(0, c):
+            AEMG[j][0] = re_raw[int(j * s + s / 2)][0]
+        # print('t:', AEMG[:,0])
+        for i in range(1, 9):
+            sw = self.slidwindow(re_raw[:, i], win_set)
+            for j in range(0, c):
+                AEMG[j][i] = mean(sw[j, :])
+        print('last AEMG:', AEMG[c - 1][16])
+        return AEMG
 
     def run(self):
         # 1.另存为高版本

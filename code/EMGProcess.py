@@ -106,7 +106,6 @@ class readData():
         RMS = zeros((c, 17), dtype=float)
         for j in range(0, c):
             RMS[j][0] = re_raw[int(j * s)][0]
-        # print('t:', AEMG[:,0])
         for i in range(1, 17):
             sw = self.slidwindow(re_raw[:, i], win_set)
             for j in range(0, c):
