@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import win32com.client as win32
 from numpy import *
-
+import xlwt
 
 
 # win32api找不到时 pip install pywin32==225
@@ -14,7 +14,7 @@ class EMGProcess(object):
         self.header = 4  # 表头在第四行
         self.folder = folder  # 文件夹路径
         self.process_folder = self.folder + "\\Process\\"
-        self.win_set = (100,100)
+        self.win_set = (100, 100)
         print("Path:", folder)
 
     def save_as_high_ver(self):
@@ -54,6 +54,7 @@ class EMGProcess(object):
                 if keyword in file:
                     print(file)
                     data = self.read_emg(self.process_folder + file)
+                    length, port = data.shape
                     print("新建肌电信号列")
                     for i in range(1, 7):
                         EMG = ("EMG_" + str(i))
@@ -61,13 +62,25 @@ class EMGProcess(object):
                         column = data[analog]
                         emg_mean = self.emg_mean(column)
                         data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
+                    #
+                    # for i in range(1, 7):
+                    #     EMG = ("EMG_" + str(i))
+                    #     RMS = ("RMS_" + str(i))
+                    #     emg_rms_temp = self.RMS(data[EMG])
+                    #
+                    #     frame = len(emg_rms_temp)
+                    #     # emg_rms = zeros(shape=length)
+                    #     # emg_rms[0] = emg_rms_temp[0]
+                    #     step = self.win_set[0]
+                    #     width = self.win_set[1]
+                    #
+                    #     # for j in range(0, frame):
+                    #     #     emg_rms[j*step] = emg_rms_temp[j]
+                    #     data[RMS] = emg_rms_temp
 
-                    print("新建RMS列")
-                    for i in range(1, 7):
-                        RMS = ("RMS_" + str(i))
-                        data[RMS] = None
                     data = data.set_index("Frame")
-                    data.to_excel(self.process_folder + file)
+                    data.to_excel(self.process_folder + RMS)
+
         self.log_create("log")
 
     def log_create(self, name):
@@ -105,23 +118,22 @@ class EMGProcess(object):
             window = array([])
             for j in range(0, width):
                 # 每列从i添加到i+width
-                window = np.append(window, raw[i + j])
-            #生成sw矩阵
+                window = append(window, raw[i + j])
+            # 生成sw矩阵
             sw[int(i / step)] = window
             i += step
         return sw
-
-    # 均方根
 
     def RMS(self, raw):
         sw = self.slid_window(raw)
         frame, width = shape(sw)
         RMS = zeros((frame, 1), dtype=float)
-        for j in range(0, width):
+        for j in range(0, frame):
             rms_p = 0
-            for k in range(0, w):
-                rms_p = rms_p + sw[j][k] ** 2 # 平方和
-            RMS[j] = (rms_p / w) ** 0.5     # 开方
+            for k in range(0, width):
+                rms_p = rms_p + sw[j][k] ** 2  # 平方和
+            RMS[j] = (rms_p / width) ** 0.5  # 开方
+
         return RMS
 
     def AEMG(self, re_raw):
@@ -145,6 +157,9 @@ class EMGProcess(object):
         self.save_as_high_ver()
         # 2.肌电信号预处理
         self.new_columns()
+        # 3. 计算RMS值
+
+
 
         # emg_data = self.read_emg()
         # # shape直接用的话表头上面不能有其他东西
