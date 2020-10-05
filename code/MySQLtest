@@ -14,6 +14,28 @@ insert into goods values (0, 'mac','笔记本','苹果',13999,default,default);
 insert into goods values (0, 'imac','台式机','苹果',23999,default,default);
 insert into goods values (0, 'GE63','游戏本','MSI',14999,default,default);
 
+create table subject(
+    id int unsigned primary key auto_increment not null,
+    name varchar(50) not null,
+    gender  char(2) default '男' check (gender in ('男','女')),
+    age int unsigned not null,
+    height decimal(3,1) not null,
+    weight decimal(3,1) not null,
+    handedness char(2) default '右' check (handedness in ('左','右')) ,
+    waistline decimal(3,1) not null,
+    upperarm decimal(3,1) not null,
+    forearm decimal(3,1) not null,
+    thigh decimal(3,1) not null,
+    shank decimal(3,1) not null
+);
+
+
+
+
+
+
+
+
 
 select* from goods where cate_name = "超极本"
 
@@ -52,3 +74,9 @@ create table if not exists goods_brands(
 );
 insert into goods_brands (name) select brand_name from goods group by brand_name;
 update goods as g inner join goods_brands as c on g.brand_name=c.name set g.brand_name=c.id;
+
+
+
+
+试图 虚拟的表 相当于解释器
+

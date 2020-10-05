@@ -87,7 +87,7 @@ class JD(object):
 
 
 def main():
-    # 1.创建京东对象3
+    # 1.创建京东对象
     jd = JD()
     # 2.调用这个对象的run方法，让其运行
     jd.run()
