@@ -1,23 +1,29 @@
-import win32com.client as win32
-
-excel = win32.gencache.EnsureDispatch('Excel.Application')
-
-
-# # # author:wzt
-# # path = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\1.xlsx"
-# # path1 = path+ "x"
-# # print(path1)
-# import pandas as pd
-# import xlwings as xw
-# import xlwt
-# import xlrd
-# import os
-# import win32com.client as win32
-# excel = win32.gencache.EnsureDispatch('Excel.Application')
+# # author:wzt
+# path = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\1.xlsx"
+# path1 = path+ "x"
+# print(path1)
+import pandas as pd
+import xlwings as xw
+import xlwt
+import xlrd
+import os
 #
-# #
-# # writer = pd.ExcelWriter(r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\Process\0921wrj_2020_09_21_140406_001_Odau_1.xlsx")
-# # data = pd.read_excel(r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\Process\0921wrj_2020_09_21_140406_001_Odau_1.xlsx", header=4)
+#
+data = pd.read_excel(r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\Process\1.xlsx", header=4)
+print(data.columns)
+print("新建肌电信号列")
+for i in range(1,7):
+    EMG = ("EMG_"+str(i))
+    data[EMG] = None
+print("新建RMS列")
+for i in range(1,7):
+    RMS = ("RMS_"+str(i))
+    data[RMS] = None
+data = data.set_index("Frame")
+data.to_excel(r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\Process\1.xlsx")
+
+
+# data["H"] = data["Analog_1"]/500
 #
 # # wb = xw.Book(r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406\Process\0921wrj_2020_09_21_140406_001_Odau_1.xlsx")
 # # sht = wb.sheets.add("new")
