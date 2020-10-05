@@ -13,6 +13,9 @@ class EMGProcess(object):
         print("Path:", folder)
 
     def save_as_high_ver(self):
+        """
+        源文件格式错误，另存为xlsx
+        """
         file_list = os.listdir(self.process_folder)
         if len(file_list)>0:
             print("文件已转换")
@@ -45,30 +48,41 @@ class EMGProcess(object):
             else:
                 if keyword in file:
                     print(file)
-                    data = pd.read_excel(self.process_folder+file, header=4)
+                    # data = pd.read_excel(self.process_folder + file, header=4)
+                    data = self.read_emg(self.process_folder + file)
                     print(data.columns)
                     print("新建肌电信号列")
                     for i in range(1, 7):
-                        EMG = ("EMG_" + str(i))
-                        data[EMG] = None
+                        colum = data[i]
+                        emg_mean = self.emg_mean(colum)
+                        if i == 3:
+
+                            data["EMG_3"] = (data[analog]-0.102)/2#除以500倍，×1000，mV
+                        else:
+                            EMG = ("EMG_" + str(i))
+                            analog = ("Analog_"+str(i))
+                            # data[EMG] = None
+                            data[EMG] = (data[analog]-emg_mean)/2#除以500倍，×1000，mV
+
                     print("新建RMS列")
                     for i in range(1, 7):
                         RMS = ("RMS_" + str(i))
                         data[RMS] = None
                     data = data.set_index("Frame")
                     data.to_excel(self.process_folder+file)
-        self.log_create("new")
+        self.log_create("log")
 
     def log_create(self,name):
         full_path = self.process_folder + name + '.txt'  # 也可以创建一个.doc的word文档
         file = open(full_path, 'w')
         file.write("新建列")
 
-
     def read_emg(self, path):
         return pd.read_excel(path, header=self.header)
 
-    def preprocessing(self):
+    def emg_mean(self, column):
+
+
         pass
         # 1. 读取数据
         # emg_data  = read_emg()
