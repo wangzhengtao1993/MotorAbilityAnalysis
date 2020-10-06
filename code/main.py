@@ -3,7 +3,8 @@ import pandas as pd
 import os
 import win32com.client as win32
 from numpy import *
-import xlwt
+import openpyxl
+
 
 
 # win32api找不到时 pip install pywin32==225
@@ -43,6 +44,9 @@ class EMGProcess(object):
             excel.Application.Quit()
             print("All files have been saved as .xlsx")
 
+    def new_sheet(self):
+        pass
+
     def new_columns(self):
         keyword = "Odau"
         file_list = os.listdir(self.process_folder)
@@ -53,8 +57,12 @@ class EMGProcess(object):
             else:
                 if keyword in file:
                     print(file)
-                    data = self.read_emg(self.process_folder + file)
-                    length, port = data.shape
+                    wb = openpyxl.load_workbook(self.process_folder + file)
+                    sheet_1 = wb.sheetnames[0]
+                    # wb.create_sheet(index=1, title="RMS")
+                    # wb.save(self.process_folder + file)
+                    writer = pd.ExcelFile(self.process_folder + file)
+                    data = pd.read_excel(self.process_folder + file, header=4)
                     print("新建肌电信号列")
                     for i in range(1, 7):
                         EMG = ("EMG_" + str(i))
@@ -62,24 +70,33 @@ class EMGProcess(object):
                         column = data[analog]
                         emg_mean = self.emg_mean(column)
                         data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
-                    #
-                    # for i in range(1, 7):
-                    #     EMG = ("EMG_" + str(i))
-                    #     RMS = ("RMS_" + str(i))
-                    #     emg_rms_temp = self.RMS(data[EMG])
-                    #
-                    #     frame = len(emg_rms_temp)
-                    #     # emg_rms = zeros(shape=length)
-                    #     # emg_rms[0] = emg_rms_temp[0]
-                    #     step = self.win_set[0]
-                    #     width = self.win_set[1]
-                    #
-                    #     # for j in range(0, frame):
-                    #     #     emg_rms[j*step] = emg_rms_temp[j]
-                    #     data[RMS] = emg_rms_temp
+                    # data = data.set_index("Frame")
+                    data.to_excel(writer, sheet_name=sheet_1, index=False)
+                    # data.to_excel(self.process_folder + file)
 
-                    data = data.set_index("Frame")
-                    data.to_excel(self.process_folder + RMS)
+                    print("新建工作表RMS")
+
+                    data = pd.read_excel(self.process_folder + file)
+                    print("data:", data)
+                    rms_data = pd.read_excel(self.process_folder + file, sheet_name="RMS")
+                    for i in range(1, 7):
+                        EMG = ("EMG_" + str(i))
+                        RMS = ("RMS_" + str(i))
+                        print("debug")
+                        emg_rms_temp = self.RMS(data[EMG])
+                        print("temp:", emg_rms_temp)
+                        rms_data[RMS] = emg_rms_temp
+
+
+                    df_rms = pd.DataFrame({"RMS_1": rms_data['RMS_1'],
+                                           "RMS_2": rms_data['RMS_2'],
+                                           "RMS_3": rms_data['RMS_3'],
+                                           "RMS_4": rms_data['RMS_4'],
+                                           "RMS_5": rms_data['RMS_5'],
+                                           "RMS_6": rms_data['RMS_6'],
+                                           })
+                    df_rms.to_excel(writer, sheet_name="RMS", index=False)
+                    writer.save()
 
         self.log_create("log")
 
@@ -94,11 +111,6 @@ class EMGProcess(object):
     @staticmethod
     def emg_mean(column):
         return column.mean()
-
-        pass
-        # 1. 读取数据
-        # emg_data  = read_emg()
-        # 2. 新建sheet，除以倍率，analog_3归零
 
     @staticmethod
     def rect(raw):
@@ -127,13 +139,12 @@ class EMGProcess(object):
     def RMS(self, raw):
         sw = self.slid_window(raw)
         frame, width = shape(sw)
-        RMS = zeros((frame, 1), dtype=float)
+        RMS = zeros(frame, dtype=float)
         for j in range(0, frame):
             rms_p = 0
             for k in range(0, width):
                 rms_p = rms_p + sw[j][k] ** 2  # 平方和
             RMS[j] = (rms_p / width) ** 0.5  # 开方
-
         return RMS
 
     def AEMG(self, re_raw):
