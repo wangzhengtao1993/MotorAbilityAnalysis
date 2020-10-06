@@ -35,6 +35,8 @@ class readData():
         # self.slidwindow(self.re_raw)
 
 
+
+
     def getMotion(self,filename):
         Motion = int(re.sub("\D", "", filename))
         motion = ['','肩关节前屈', '肩关节外展', '是肘关节屈伸', '腕关节屈伸', '手指屈伸']

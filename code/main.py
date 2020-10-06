@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 import win32com.client as win32
-
+import matplotlib.pyplot as plt
 from numpy import *
 import openpyxl
 
@@ -11,14 +11,52 @@ import openpyxl
 
 class EMGProcess(object):
 
-    def __init__(self, folder):
+    def __init__(self, folder, subject):
         self.header = 4  # 表头在第四行
         self.folder = folder  # 文件夹路径
+        if os.path.exists:
+            pass
+        else:
+            os.mkdir(self.folder + "\\Process\\")
         self.process_folder = self.folder + "\\Process\\"
         self.win_set = (100, 100)
+        self.subject = subject
         print("Path:", folder)
 
+    def rename_test_file(self):
+        file_list = os.listdir(self.process_folder)
+        f = file_list[2]
+        print(f[0:26])
+        file_name = pd.read_excel(self.subject, dtype=str)
+        print(file_name)
+
+        # 遍历所有文件
+        keyword = "Odau"
+        for file in file_list:
+            if keyword in file:
+                print("file", file[26:29])
+                file_id = file[26:29]
+                # 遍历所有文件id
+                for motion in range(0, 6):
+                    for motion_pattern in range(1, 4):
+                        # print("motion:", motion)
+                        # print("motion_pattern:", motion_pattern)
+                        motion_id = file_name.iloc[motion, motion_pattern]
+                        # print("motion_id:", motion_id)
+                        if file_id == motion_id:
+                            dst_name = f[0:26] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
+                                       file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
+
+                            if os.path.exists(self.process_folder + file):
+                                os.rename(self.process_folder + file, self.process_folder + dst_name)
+                                print("rename:", dst_name)
+                            else:
+                                pass
+
+        # src_file_name = f[26:29]
+
     def save_as_high_ver(self):
+
         """
         源文件格式错误，另存为xlsx
         """
@@ -30,6 +68,7 @@ class EMGProcess(object):
             file_list = os.listdir(self.folder)
             # 2.打开excel处理程序，固定写法
             excel = win32.gencache.EnsureDispatch('Excel.Application')
+
             print("saving as .xlsx")
             for file in file_list:
                 # 将文件名与后缀分开
@@ -73,16 +112,14 @@ class EMGProcess(object):
                     for i in range(1, 7):
                         EMG_ = ("EMG_" + str(i))
                         RMS_ = ("RMS_" + str(i))
-                        print("debug")
                         emg_rms_temp = self.RMS(data[EMG_])
-                        print("temp:", emg_rms_temp)
+                        # print("temp:", emg_rms_temp)
                         rms_data[RMS_] = emg_rms_temp
 
+                    # 生成时间序列
                     frames = shape(rms_data)[0]
                     end_time = frames * self.win_set[0] / 1000
-                    print("end_time", end_time)
                     time = arange(0, end_time, self.win_set[0] / 1000)
-                    print("time:", time)
 
                     df_rms = pd.DataFrame({"time": time,
                                            "RMS_1": rms_data['RMS_1'],
@@ -92,9 +129,15 @@ class EMGProcess(object):
                                            "RMS_5": rms_data['RMS_5'],
                                            "RMS_6": rms_data['RMS_6'],
                                            })
-                    # frames = shape(df_rms)
-                    #
-                    # df_rms.insert(0, "time", zeros(frames))
+
+                    df_rms.rename(columns={"RMS_1": "RMS_1_三角肌前束",
+                                           "RMS_2": "RMS_2_三角肌后束",
+                                           "RMS_3": "RMS_3_肱二头肌",
+                                           "RMS_4": "RMS_4_肱三头肌",
+                                           "RMS_5": "RMS_5_桡侧腕屈肌",
+                                           "RMS_6": "RMS_6_尺侧腕伸肌",
+                                           }, inplace=True)
+
                     # 分别写入两张表
                     writer = pd.ExcelWriter(self.process_folder + file)
                     data.to_excel(writer, sheet_name=sheet_1, index=False)
@@ -151,31 +194,37 @@ class EMGProcess(object):
         return RMS
 
     def AEMG(self, re_raw):
-        l = len(re_raw)
-        s = self.win_set[0]
-        w = self.win_set[1]
-        c = int((l - w) / s + 1)  # 处理后的帧数
-        AEMG = zeros((c, 17), dtype=float)
-        for j in range(0, c):
-            AEMG[j][0] = re_raw[int(j * s + s / 2)][0]
-        # print('t:', AEMG[:,0])
-        for i in range(1, 9):
-            sw = self.slidwindow(re_raw[:, i], win_set)
-            for j in range(0, c):
-                AEMG[j][i] = mean(sw[j, :])
-        print('last AEMG:', AEMG[c - 1][16])
-        return AEMG
+        pass
+
+    def rms_plot(self):
+        keyword = "Odau"
+        file_list = os.listdir(self.process_folder)
+        for file in file_list:
+            if "plot.txt" in file_list:
+                print("列已添加")
+                break
+            else:
+                if keyword in file:
+                    rms = pd.read_excel(self.process_folder + file, sheet_name="RMS")
+                    rms.plot(x="time", y=["RMS_1", "RMS_2", "RMS_3", "RMS_4", "RMS_5", "RMS_6"])
+                    plt.title("test")
+                    plt.show()
+        print("图已添加")
 
     def run(self):
-        # 1.另存为高版本
+        # 1.另存为高版本，测试文件重命名对应动作
         self.save_as_high_ver()
-        # 2.肌电信号预处理，矫正零偏，计算RMS
-        self.new_columns()
+        # self.rename_test_file()
+        # # # 2.肌电信号预处理，矫正零偏，计算RMS
+        # self.new_columns()
+        # # # 3. 插入图像
+        # self.rms_plot()
 
 
 def main():
     folder = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406"
-    EP = EMGProcess(folder)
+    subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
+    EP = EMGProcess(folder, subject)
     EP.run()
 
 
