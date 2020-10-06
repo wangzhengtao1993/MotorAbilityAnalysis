@@ -257,8 +257,8 @@ class EMGProcess(object):
                     chart1 = LineChart()
                     cats = Reference(ws, min_col=1, min_row=2, max_row=max_row + 1)
                     chart1.set_categories(cats)
-                    chart1.width = 40
-                    chart1.height = 20
+                    chart1.width = 20
+                    chart1.height = 10
                     chart1.x_axis.title = "time/s"
                     chart1.y_axis.title = "RMS/mV"
                     chart1.y_axis.scaling.max = 0.5
@@ -271,7 +271,7 @@ class EMGProcess(object):
                         s['x%s' % i] = chart1.series[i - 1]
                         s['x%s' % i].graphicalProperties.line.width = 20000
 
-                    ws.add_chart(chart1, "I5")
+                    ws.add_chart(chart1, "I1")
                     wb.save(self.process_folder + file)
                     self.log_create("plot", file + "\n")
 
@@ -287,46 +287,56 @@ class EMGProcess(object):
                     print(file)
                     data = pd.read_excel(self.process_folder + file, sheet_name="RMS")
                     if self.upper_limb:
-                        col={1: "RMS_1_三角肌前束",
-                             2: "RMS_2_三角肌后束",
-                             3: "RMS_3_肱二头肌",
-                             4: "RMS_4_肱三头肌",
-                             5: "RMS_5_桡侧腕屈肌",
-                             6: "RMS_6_尺侧腕伸肌"}
+                        col = {1: "RMS_1_三角肌前束",
+                               2: "RMS_2_三角肌后束",
+                               3: "RMS_3_肱二头肌",
+                               4: "RMS_4_肱三头肌",
+                               5: "RMS_5_桡侧腕屈肌",
+                               6: "RMS_6_尺侧腕伸肌"}
 
                     else:
-                        col={1: "RMS_1_股直肌",
-                             2: "RMS_2_股二头肌",
-                             3: "RMS_3_半腱肌",
-                             4: "RMS_4_股内侧肌",
-                             5: "RMS_5_胫骨前肌",
-                             6: "RMS_6_外侧腓肠肌"
-                             }
+                        col = {1: "RMS_1_股直肌",
+                               2: "RMS_2_股二头肌",
+                               3: "RMS_3_半腱肌",
+                               4: "RMS_4_股内侧肌",
+                               5: "RMS_5_胫骨前肌",
+                               6: "RMS_6_外侧腓肠肌"
+                               }
+                    # ["time", "RMS_1_股直肌", "RMS_2_股二头肌", "RMS_3_半腱肌", "RMS_4_股内侧肌", "RMS_5_胫骨前肌", "RMS_6_外侧腓肠肌"]
 
                     # 取最大的前40%的值，求平均
                     frames = len(data)
-                    max_frames = int(0.4*frames)
-                    rms_max = {}
+                    max_frames = int(0.4 * frames)
+                    rms_max = ["RMS_max", 0, 0, 0, 0, 0, 0]
 
                     for i in range(1, 7):
                         temp = data.iloc[data[col[i]].argsort()[-max_frames:]]
                         # print("debug1",temp)
-
                         rms_max[i] = mean(temp[col[i]])
+
                         # print("debug2", rms_max)
                     print(rms_max)
+
                     wb = openpyxl.load_workbook(self.process_folder + file)
-                    print("open and plot:", self.process_folder + file)
+                    # print("open and plot:", self.process_folder + file)
                     ws = wb["RMS"]
+                    ws.append(rms_max)
+                    wb.save(self.process_folder + file)
 
-
-
-
-                    # print("rms_max:", mean(rms_max["RMS_1_股直肌"]))
-
-
-
-
+                    wb = openpyxl.load_workbook(self.process_folder + file)
+                    ws = wb["RMS"]
+                    chart = BarChart()
+                    cats = Reference(ws, min_col=2, max_col=7, min_row=1)
+                    chart.set_categories(cats)
+                    chart.width = 20
+                    chart.height = 10
+                    chart.x_axis.title = "time/s"
+                    chart.y_axis.title = "RMS/mV"
+                    chart.y_axis.scaling.max = 0.5
+                    rms_max_data = Reference(ws, min_col=2, max_col=7, min_row=frames+1)
+                    chart.add_data(rms_max_data)
+                    ws.add_chart(chart, "I20")
+                    wb.save(self.process_folder + file)
 
 
     def run(self):
@@ -351,7 +361,6 @@ def main():
     subject = r"D:\code\运动能力分析实验\王晶.xlsx"
     subject = r"D:\code\运动能力分析实验\曾威.xlsx"
     subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
-
 
     EP = EMGProcess(folder, subject)
     EP.run()
