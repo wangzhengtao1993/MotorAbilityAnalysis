@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from numpy import *
 import openpyxl
+from copy import deepcopy
 from openpyxl.chart import (
     Reference,
     series,
@@ -42,34 +43,37 @@ class EMGProcess(object):
         # 遍历所有文件
         if self.upper_limb:
             motion_id_start = 0
-            motion_id_end = 6
+            motion_id_end = 7
         else:
             motion_id_start = 7
-            motion_id_end = 13
+            motion_id_end = 14
 
         keyword = "Odau"
         for file in file_list:
-            if keyword in file:
-                print("file", file[26:29])
-                file_id = file[26:29]
-                # 遍历所有文件id
-                for motion in range(motion_id_start, motion_id_end):
-                    for motion_pattern in range(1, 4):
-                        # print("motion:", motion)
-                        # print("motion_pattern:", motion_pattern)
-                        motion_id = file_name.iloc[motion, motion_pattern]
-                        # print("motion_id:", motion_id)
-                        if file_id == motion_id:
-                            dst_name = f[0:26] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
-                                       file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
+            if "new_name.txt" in file_list:
+                print("已重命名")
+                break
+            else:
+                if keyword in file:
+                    print("file", file[-15:-12])
+                    file_id = file[-15:-12]
+                    # 遍历所有文件id
+                    for motion in range(motion_id_start, motion_id_end):
+                        for motion_pattern in range(1, 4):
+                            # print("motion:", motion)
+                            # print("motion_pattern:", motion_pattern)
+                            motion_id = file_name.iloc[motion, motion_pattern]
+                            # print("motion_id:", motion_id)
+                            if file_id == motion_id:
+                                dst_name = f[:-15] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
+                                           file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
+                                self.log_create("new_name", dst_name + "\n")
 
-                            if os.path.exists(self.process_folder + file):
-                                os.rename(self.process_folder + file, self.process_folder + dst_name)
-                                print("rename:", dst_name)
-                            else:
-                                pass
-
-        # src_file_name = f[26:29]
+                                if os.path.exists(self.process_folder + file):
+                                    os.rename(self.process_folder + file, self.process_folder + dst_name)
+                                    print("rename:", dst_name)
+                                else:
+                                    pass
 
     def save_as_high_ver(self):
         """
@@ -123,7 +127,6 @@ class EMGProcess(object):
                         emg_mean = self.emg_mean(column)
                         data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
                     print("新建工作表RMS")
-
                     rms_data = pd.DataFrame()
                     for i in range(1, 7):
                         EMG_ = ("EMG_" + str(i))
@@ -168,12 +171,12 @@ class EMGProcess(object):
                     df_rms.to_excel(writer, sheet_name="RMS", index=False)
                     writer.save()
 
-        self.log_create("log")
+        self.log_create("log", "新建列")
 
-    def log_create(self, name):
+    def log_create(self, name, info):
         full_path = self.process_folder + name + '.txt'  # 也可以创建一个.doc的word文档
-        file = open(full_path, 'w')
-        file.write("新建列")
+        file = open(full_path, 'a')
+        file.write(info)
 
     def read_emg(self, path):
         return pd.read_excel(path, header=self.header)
@@ -242,56 +245,89 @@ class EMGProcess(object):
         keyword = "Odau"
         file_list = os.listdir(self.process_folder)
         for file in file_list:
-            if keyword in file:
-                wb = openpyxl.load_workbook(self.folder + "\\Process\\" + file)
-                print("open:", self.folder + "\\Process\\" + file)
-                print(wb.sheetnames)
+            if "plot.txt" in file_list:
+                print("已绘图")
+                break
+            else:
+                if keyword in file:
+                    wb = openpyxl.load_workbook(self.process_folder + file)
+                    print("open and plot:", self.process_folder + file)
+                    ws = wb["RMS"]
+                    max_row = ws.max_row
+                    chart1 = LineChart()
+                    cats = Reference(ws, min_col=1, min_row=2, max_row=max_row + 1)
+                    chart1.set_categories(cats)
+                    chart1.width = 40
+                    chart1.height = 20
+                    chart1.x_axis.title = "time/s"
+                    chart1.y_axis.title = "RMS/mV"
+                    chart1.y_axis.scaling.max = 0.5
 
-                # ws = wb.get_sheet_by_name("RMS")
-                ws = wb["RMS"]
+                    data = locals()
+                    s = locals()
+                    for i in range(1, 7):
+                        data['x%s' % i] = Reference(ws, min_col=(i + 1), min_row=1, max_row=max_row + 1)
+                        chart1.add_data(data['x%s' % i], titles_from_data=True)
+                        s['x%s' % i] = chart1.series[i - 1]
+                        s['x%s' % i].graphicalProperties.line.width = 20000
 
-                max_row = ws.max_row
-                print("max_row", max_row)
+                    ws.add_chart(chart1, "I5")
+                    wb.save(self.process_folder + file)
+                    self.log_create("plot", file + "\n")
 
-                chart1 = LineChart()
-                # chart1.type = "col"
-                chart1.style = 10
-                chart1.title = "RMS"
-                cats = Reference(ws, min_col=1, min_row=2, max_row=max_row + 1)
-                print("cat:", type(cats))
+    def max_mean(self):
+        keyword = "Odau"
+        file_list = os.listdir(self.process_folder)
+        for file in file_list:
+            if "rms.txt" in file_list:
+                print("已绘图")
+                break
+            else:
+                if keyword in file:
+                    print(file)
+                    data = pd.read_excel(self.process_folder + file, sheet_name="RMS")
+                    if self.upper_limb:
+                        col={1: "RMS_1_三角肌前束",
+                             2: "RMS_2_三角肌后束",
+                             3: "RMS_3_肱二头肌",
+                             4: "RMS_4_肱三头肌",
+                             5: "RMS_5_桡侧腕屈肌",
+                             6: "RMS_6_尺侧腕伸肌"}
 
-                data = locals()
-                s = locals()
+                    else:
+                        col={1: "RMS_1_股直肌",
+                             2: "RMS_2_股二头肌",
+                             3: "RMS_3_半腱肌",
+                             4: "RMS_4_股内侧肌",
+                             5: "RMS_5_胫骨前肌",
+                             6: "RMS_6_外侧腓肠肌"
+                             }
 
-                for i in range(1, 7):
-                    data['x%s' % i] = Reference(ws, min_col=(i + 1), min_row=1, max_row=max_row + 1)
-                    chart1.add_data(data['x%s' % i], titles_from_data=True)
-                    s['x%s' % i] = chart1.series[i - 1]
-                    s['x%s' % i].graphicalProperties.line.width = 5000
+                    # 取最大的前40%的值，求平均
+                    frames = len(data)
+                    max_frames = int(0.4*frames)
+                    rms_max = {}
 
-                # data1 = Reference(ws, min_col=2, min_row=1, max_row=max_row + 1)
-                # data2 = Reference(ws, min_col=3, min_row=1, max_row=max_row + 1)
-                # data3 = Reference(ws, min_col=4, min_row=1, max_row=max_row + 1)
-                # data4 = Reference(ws, min_col=5, min_row=1, max_row=max_row + 1)
-                # data5 = Reference(ws, min_col=6, min_row=1, max_row=max_row + 1)
-                # data6 = Reference(ws, min_col=7, min_row=1, max_row=max_row + 1)
-                #
-                # chart1.add_data(data1, titles_from_data=True)
-                # chart1.add_data(data2, titles_from_data=True)
-                # chart1.add_data(data3, titles_from_data=True)
-                # chart1.add_data(data4, titles_from_data=True)
-                # chart1.add_data(data5, titles_from_data=True)
-                # chart1.add_data(data6, titles_from_data=True)
+                    for i in range(1, 7):
+                        temp = data.iloc[data[col[i]].argsort()[-max_frames:]]
+                        # print("debug1",temp)
 
-                chart1.set_categories(cats)
-                chart1.width = 40
-                chart1.height = 20
-                chart1.x_axis.title = "time/s"
-                chart1.y_axis.title = "RMS/mV"
-                chart1.y_axis.scaling.max = 0.2
+                        rms_max[i] = mean(temp[col[i]])
+                        # print("debug2", rms_max)
+                    print(rms_max)
+                    wb = openpyxl.load_workbook(self.process_folder + file)
+                    print("open and plot:", self.process_folder + file)
+                    ws = wb["RMS"]
 
-                ws.add_chart(chart1, "I5")
-                wb.save(self.folder + "\\Process\\" + file)
+
+
+
+                    # print("rms_max:", mean(rms_max["RMS_1_股直肌"]))
+
+
+
+
+
 
     def run(self):
         # 1.另存为高版本，测试文件重命名对应动作
@@ -301,12 +337,21 @@ class EMGProcess(object):
         self.new_columns()
         # # # 3. 插入图像
         self.plot_in_excel()
+        # 4. 提取最大值
+        self.max_mean()
 
 
 def main():
     # folder = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406"
     folder = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_144822"
+    folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_200721"
+    folder = r"D:\code\运动能力分析实验\0923zw_2020_09_23_152448"
+    folder = r"D:\code\运动能力分析实验\0922gxw_2020_09_22_192035"
     subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
+    subject = r"D:\code\运动能力分析实验\王晶.xlsx"
+    subject = r"D:\code\运动能力分析实验\曾威.xlsx"
+    subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
+
 
     EP = EMGProcess(folder, subject)
     EP.run()

@@ -1,8 +1,15 @@
 # author:wzt
 import pandas as pd
+
+
+
+f = "0924wj_2020_09_24_200721_002_Odau_1.xlsx"
+print(f[-15:-12])
+
+
 import openpyxl
 
-from openpyxl.chart import(
+from openpyxl.chart import (
     Reference,
     Series,
     PieChart,
@@ -16,6 +23,8 @@ from openpyxl.chart import(
 wb = openpyxl.Workbook()
 ws = wb.active
 ws.title = "PieChart"
+wb2 = openpyxl.Workbook()
+ws2 = wb2.active
 
 data = [
     ["pie", "sold"],
@@ -36,15 +45,15 @@ pie.set_categories(labels)
 pie.title = "Pie sold by category"
 ws.add_chart(pie, "A15")
 
-
 ws = wb.create_sheet("barchart")
 rows = [
     ("Num", "Batch_1", "batch_2"),
-    (1,2,3),
-    (2,3,4),
-    (3,4,5),
-    (4,5,6)
+    (1, 2, 3),
+    (2, 3, 4),
+    (3, 4, 5),
+    (4, 5, 6)
 ]
+
 
 
 for row in rows:
@@ -62,40 +71,10 @@ chart1.add_data(data2)
 
 chart1.set_categories(cats)
 ws.add_chart(chart1, "B5")
-
-# for row in rows:
-#     ws.append(row)
-# chart1 = BarChart()
-# chart1.type = "col"
-# chart1.style = 15
-# chart1.title = "Bar"
-# chart1.y_axis.title = "batch"
-# cats = Reference(ws, min_col=1, min_row=2, max_row=5)
-# data = Reference(ws, min_col=2, min_row=2, max_row=5)
-# chart1.add_data(data)
-# chart1.set_categories(cats)
-# ws.add_chart(chart1, "B5")
-
-
-
+ws2.add_chart(chart1)
 
 wb.save("charttest.xlsx")
-
-
-
-names = locals()
-for i in range(1, 101):
-	names['x%s' % i] = i
-    print(names)
-
-
-
-
-
-
-
-
-
+wb2.save("charttest2.xlsx")
 
 # books = pd.read_excel("test1.xlsx",skiprows=9, usecols="D:E",dtype={"ID":str})
 # print(books)
@@ -129,4 +108,3 @@ for i in range(1, 101):
 #         new_file_name = f+file_name.columns[type]+file_name.iloc[motion,1]
 #
 # print(new_file_name)
-
