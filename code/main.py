@@ -6,7 +6,6 @@ from numpy import *
 import openpyxl
 
 
-
 # win32api找不到时 pip install pywin32==225
 
 class EMGProcess(object):
@@ -57,11 +56,11 @@ class EMGProcess(object):
             else:
                 if keyword in file:
                     print(file)
-                    wb = openpyxl.load_workbook(self.process_folder + file)
-                    sheet_1 = wb.sheetnames[0]
-                    # wb.create_sheet(index=1, title="RMS")
-                    # wb.save(self.process_folder + file)
-                    writer = pd.ExcelFile(self.process_folder + file)
+                    wb = openpyxl.load_workbook(self.process_folder + file)  # 打开文件
+                    sheet_1 = wb.sheetnames[0]  # 获得第一个sheet名
+                    # wb.create_sheet(index=1, title="RMS")  # 新建RMS sheet
+                    # wb.save(self.process_folder + file)  #
+
                     data = pd.read_excel(self.process_folder + file, header=4)
                     print("新建肌电信号列")
                     for i in range(1, 7):
@@ -71,14 +70,13 @@ class EMGProcess(object):
                         emg_mean = self.emg_mean(column)
                         data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
                     # data = data.set_index("Frame")
-                    data.to_excel(writer, sheet_name=sheet_1, index=False)
+                    # data.to_excel(writer, sheet_name=sheet_1, index=False)
                     # data.to_excel(self.process_folder + file)
 
                     print("新建工作表RMS")
-
-                    data = pd.read_excel(self.process_folder + file)
-                    print("data:", data)
-                    rms_data = pd.read_excel(self.process_folder + file, sheet_name="RMS")
+                    # data = pd.read_excel(self.process_folder + file)
+                    # print("data:", data)
+                    rms_data = pd.DataFrame()
                     for i in range(1, 7):
                         EMG = ("EMG_" + str(i))
                         RMS = ("RMS_" + str(i))
@@ -86,8 +84,6 @@ class EMGProcess(object):
                         emg_rms_temp = self.RMS(data[EMG])
                         print("temp:", emg_rms_temp)
                         rms_data[RMS] = emg_rms_temp
-
-
                     df_rms = pd.DataFrame({"RMS_1": rms_data['RMS_1'],
                                            "RMS_2": rms_data['RMS_2'],
                                            "RMS_3": rms_data['RMS_3'],
@@ -95,6 +91,8 @@ class EMGProcess(object):
                                            "RMS_5": rms_data['RMS_5'],
                                            "RMS_6": rms_data['RMS_6'],
                                            })
+                    writer = pd.ExcelWriter(self.process_folder + file)
+                    data.to_excel(writer, sheet_name=sheet_1, index=False)
                     df_rms.to_excel(writer, sheet_name="RMS", index=False)
                     writer.save()
 
@@ -169,8 +167,6 @@ class EMGProcess(object):
         # 2.肌电信号预处理
         self.new_columns()
         # 3. 计算RMS值
-
-
 
         # emg_data = self.read_emg()
         # # shape直接用的话表头上面不能有其他东西
