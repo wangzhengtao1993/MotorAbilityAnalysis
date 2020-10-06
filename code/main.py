@@ -249,6 +249,7 @@ class EMGProcess(object):
 
                 # ws = wb.get_sheet_by_name("RMS")
                 ws = wb["RMS"]
+
                 max_row = ws.max_row
                 print("max_row", max_row)
 
@@ -256,32 +257,38 @@ class EMGProcess(object):
                 # chart1.type = "col"
                 chart1.style = 10
                 chart1.title = "RMS"
-
-                labels = Reference(ws, min_col=2, max_col=7, min_row=1)
                 cats = Reference(ws, min_col=1, min_row=2, max_row=max_row + 1)
-                data1 = Reference(ws, min_col=2, min_row=1, max_row=max_row + 1)
-                data2 = Reference(ws, min_col=3, min_row=1, max_row=max_row + 1)
-                data3 = Reference(ws, min_col=4, min_row=1, max_row=max_row + 1)
-                data4 = Reference(ws, min_col=5, min_row=1, max_row=max_row + 1)
-                data5 = Reference(ws, min_col=6, min_row=1, max_row=max_row + 1)
-                data6 = Reference(ws, min_col=7, min_row=1, max_row=max_row + 1)
+                print("cat:", type(cats))
 
-                chart1.add_data(data1, titles_from_data=True)
-                chart1.add_data(data2, titles_from_data=True)
-                chart1.add_data(data3, titles_from_data=True)
-                chart1.add_data(data4, titles_from_data=True)
-                chart1.add_data(data5, titles_from_data=True)
-                chart1.add_data(data6, titles_from_data=True)
+                data = locals()
+                s = locals()
+
+                for i in range(1, 7):
+                    data['x%s' % i] = Reference(ws, min_col=(i + 1), min_row=1, max_row=max_row + 1)
+                    chart1.add_data(data['x%s' % i], titles_from_data=True)
+                    s['x%s' % i] = chart1.series[i - 1]
+                    s['x%s' % i].graphicalProperties.line.width = 5000
+
+                # data1 = Reference(ws, min_col=2, min_row=1, max_row=max_row + 1)
+                # data2 = Reference(ws, min_col=3, min_row=1, max_row=max_row + 1)
+                # data3 = Reference(ws, min_col=4, min_row=1, max_row=max_row + 1)
+                # data4 = Reference(ws, min_col=5, min_row=1, max_row=max_row + 1)
+                # data5 = Reference(ws, min_col=6, min_row=1, max_row=max_row + 1)
+                # data6 = Reference(ws, min_col=7, min_row=1, max_row=max_row + 1)
+                #
+                # chart1.add_data(data1, titles_from_data=True)
+                # chart1.add_data(data2, titles_from_data=True)
+                # chart1.add_data(data3, titles_from_data=True)
+                # chart1.add_data(data4, titles_from_data=True)
+                # chart1.add_data(data5, titles_from_data=True)
+                # chart1.add_data(data6, titles_from_data=True)
 
                 chart1.set_categories(cats)
-                # s1 = chart1.series[0:6]
-                # s1.graphicalProperties.line.width = 1000
                 chart1.width = 40
                 chart1.height = 20
                 chart1.x_axis.title = "time/s"
                 chart1.y_axis.title = "RMS/mV"
                 chart1.y_axis.scaling.max = 0.2
-
 
                 ws.add_chart(chart1, "I5")
                 wb.save(self.folder + "\\Process\\" + file)
@@ -294,7 +301,6 @@ class EMGProcess(object):
         self.new_columns()
         # # # 3. 插入图像
         self.plot_in_excel()
-        # self.rms_plot()
 
 
 def main():
