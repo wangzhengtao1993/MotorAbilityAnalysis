@@ -306,7 +306,7 @@ class EMGProcess(object):
 
                     # 取最大的前40%的值，求平均
                     frames = len(data)
-                    max_frames = int(0.4 * frames)
+                    max_frames = int(0.2 * frames)
                     rms_max = ["RMS_max", 0, 0, 0, 0, 0, 0]
 
                     for i in range(1, 7):
@@ -356,11 +356,11 @@ def main():
     folder = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_144822"
     folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_200721"
     folder = r"D:\code\运动能力分析实验\0923zw_2020_09_23_152448"
-    folder = r"D:\code\运动能力分析实验\0922gxw_2020_09_22_192035"
+    # folder = r"D:\code\运动能力分析实验\0922gxw_2020_09_22_192035"
     subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
     subject = r"D:\code\运动能力分析实验\王晶.xlsx"
     subject = r"D:\code\运动能力分析实验\曾威.xlsx"
-    subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
+    # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
 
     EP = EMGProcess(folder, subject)
     EP.run()
