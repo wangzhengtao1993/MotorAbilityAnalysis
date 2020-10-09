@@ -4,7 +4,6 @@ from PySide2.QtUiTools import QUiLoader
 from pymysql import *
 import tkinter as tk
 from tkinter import filedialog
-from numpy import zeros
 
 
 class NewTest(QDialog):
@@ -14,6 +13,7 @@ class NewTest(QDialog):
 
     def __init__(self, user_id):
         super().__init__()
+        self.user_id = user_id
 
         self.conn = connect(host='localhost', port=3306, user='root',
                             password='123456', database='motor_ability_analysis', charset='utf8')
@@ -34,10 +34,10 @@ class NewTest(QDialog):
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
 
-    def __del__(self):
-        self.cursor.close()
-        self.conn.close()
-        print("database motor_ability_analysis disconnected")
+    # def __del__(self):
+    #     self.cursor.close()
+    #     self.conn.close()
+    #     print("database motor_ability_analysis disconnected")
 
     def accept(self):
         self.save()
@@ -74,7 +74,7 @@ class NewTest(QDialog):
                 temp = self.ui.t_file_cfg.item(j, i).text()
                 motion[i] = temp
             header = self.ui.t_file_cfg.verticalHeaderItem(j).text()
-            file_cfg = [user_id, header] + motion
+            file_cfg = [self.user_id, header] + motion
 
             sql = """INSERT INTO t_file_cfg (user_id, motion, active, mvc, passive) 
             VALUES (%s, %s, %s, %s, %s)"""

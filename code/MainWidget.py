@@ -3,8 +3,9 @@ from PySide2.QtUiTools import QUiLoader
 from pyqtgraph.Qt import QtCore
 import pyqtgraph as pg
 from EMGProcess import readData as rd
-from new_user import NewUser
 from pymysql import *
+from new_user import NewUser
+from new_test import NewTest
 
 
 class HomePage():
@@ -32,6 +33,7 @@ class HomePage():
         self.ui.new_user_btn.clicked.connect(self.new_user)
         self.ui.open_user_btn.clicked.connect(self.open_user)
         self.ui.plot_btn.clicked.connect(self.multpolt)
+        self.ui.new_test_btn.clicked.connect(self.new_test)
         # self.ui.window_setting_btn.clicked.connect(self.showWindowSetting)
 
     def init_plot(self):
@@ -95,6 +97,15 @@ class HomePage():
         self.ui.l_thigh.setText(str(user_info[10]))
         self.ui.l_shank.setText(str(user_info[11]))
         print("user info is shown on Widget")
+
+    def new_test(self):
+        user_id = self.ui.l_user_id.text()
+        name = self.ui.l_name.text()
+        print("import new test data of ID:%s Name:%s" % (user_id, name))
+
+        new_test = NewTest(user_id)
+        new_test.ui.show()
+        new_test.ui.exec_()
 
     # 绘图
     def multpolt(self):
