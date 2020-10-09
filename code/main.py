@@ -21,7 +21,7 @@ from openpyxl.chart import (
 class EMGProcess(object):
 
     def __init__(self, folder, subject):
-        self.upper_limb = False
+        self.upper_limb = True
         self.header = 4  # 表头在第四行
         self.folder = folder  # 文件夹路径
         # 新建文件夹
@@ -307,7 +307,7 @@ class EMGProcess(object):
 
                     # 取最大的前40%的值，求平均
                     frames = len(data)
-                    max_frames = int(0.2 * frames)
+                    max_frames = int(0.1 * frames)
                     rms_max = ["RMS_max", 0, 0, 0, 0, 0, 0]
 
                     for i in range(1, 7):
@@ -334,7 +334,7 @@ class EMGProcess(object):
                     chart.x_axis.title = "time/s"
                     chart.y_axis.title = "RMS/mV"
                     chart.y_axis.scaling.max = 0.5
-                    rms_max_data = Reference(ws, min_col=2, max_col=7, min_row=frames+1)
+                    rms_max_data = Reference(ws, min_col=2, max_col=7, min_row=frames+2)
                     chart.add_data(rms_max_data)
                     ws.add_chart(chart, "I20")
                     wb.save(self.process_folder + file)
@@ -358,10 +358,12 @@ def main():
     folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_200721"
     folder = r"D:\code\运动能力分析实验\0923zw_2020_09_23_152448"
     # folder = r"D:\code\运动能力分析实验\0922gxw_2020_09_22_192035"
+    folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_191402"
     subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
     subject = r"D:\code\运动能力分析实验\王晶.xlsx"
-    subject = r"D:\code\运动能力分析实验\曾威.xlsx"
-    # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
+    # subject = r"D:\code\运动能力分析实验\曾威.xlsx"
+    # # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
+    # subject = r"D:\code\运动能力分析实验\肖凌云.xlsx"
 
     EP = EMGProcess(folder, subject)
     EP.run()
