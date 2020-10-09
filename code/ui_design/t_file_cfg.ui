@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dialog</class>
+ <widget class="QDialog" name="dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>50</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>测试文件编号</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="l_user_info">
+     <property name="text">
+      <string>ID：000 姓名：张三 文件夹路径：</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="upper_folder_btn">
+       <property name="text">
+        <string>上肢文件夹</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="lower_folder_btn">
+       <property name="text">
+        <string>下肢文件夹</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>请输入测试文件三位编号</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="t_file_cfg">
+     <row>
+      <property name="text">
+       <string>上肢静息</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>屈肩</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>伸肩</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>屈肘</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>伸肘</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>屈腕</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>伸腕</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>下肢静息</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>屈髋</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>伸髋</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>屈膝</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>踝背伸</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>踝跖屈</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>主动</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>最大等长</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>被动</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>001</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>001</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>001</string>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>002</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>014</string>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="text">
+       <string>008</string>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string>003</string>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="text">
+       <string>015</string>
+      </property>
+     </item>
+     <item row="2" column="2">
+      <property name="text">
+       <string>009</string>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="text">
+       <string>004</string>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="text">
+       <string>016</string>
+      </property>
+     </item>
+     <item row="3" column="2">
+      <property name="text">
+       <string>010</string>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="text">
+       <string>005</string>
+      </property>
+     </item>
+     <item row="4" column="1">
+      <property name="text">
+       <string>017</string>
+      </property>
+     </item>
+     <item row="4" column="2">
+      <property name="text">
+       <string>011</string>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="text">
+       <string>006</string>
+      </property>
+     </item>
+     <item row="5" column="1">
+      <property name="text">
+       <string>018</string>
+      </property>
+     </item>
+     <item row="5" column="2">
+      <property name="text">
+       <string>012</string>
+      </property>
+     </item>
+     <item row="6" column="0">
+      <property name="text">
+       <string>007</string>
+      </property>
+     </item>
+     <item row="6" column="1">
+      <property name="text">
+       <string>019</string>
+      </property>
+     </item>
+     <item row="6" column="2">
+      <property name="text">
+       <string>013</string>
+      </property>
+     </item>
+     <item row="7" column="0">
+      <property name="text">
+       <string>001</string>
+      </property>
+     </item>
+     <item row="7" column="1">
+      <property name="text">
+       <string>001</string>
+      </property>
+     </item>
+     <item row="7" column="2">
+      <property name="text">
+       <string>001</string>
+      </property>
+     </item>
+     <item row="8" column="0">
+      <property name="text">
+       <string>002</string>
+      </property>
+     </item>
+     <item row="8" column="1">
+      <property name="text">
+       <string>008</string>
+      </property>
+     </item>
+     <item row="8" column="2">
+      <property name="text">
+       <string>014</string>
+      </property>
+     </item>
+     <item row="9" column="0">
+      <property name="text">
+       <string>003</string>
+      </property>
+     </item>
+     <item row="9" column="1">
+      <property name="text">
+       <string>009</string>
+      </property>
+     </item>
+     <item row="9" column="2">
+      <property name="text">
+       <string>015</string>
+      </property>
+     </item>
+     <item row="10" column="0">
+      <property name="text">
+       <string>004</string>
+      </property>
+     </item>
+     <item row="10" column="1">
+      <property name="text">
+       <string>010</string>
+      </property>
+     </item>
+     <item row="10" column="2">
+      <property name="text">
+       <string>016</string>
+      </property>
+     </item>
+     <item row="11" column="0">
+      <property name="text">
+       <string>005</string>
+      </property>
+     </item>
+     <item row="11" column="1">
+      <property name="text">
+       <string>011</string>
+      </property>
+     </item>
+     <item row="11" column="2">
+      <property name="text">
+       <string>017</string>
+      </property>
+     </item>
+     <item row="12" column="0">
+      <property name="text">
+       <string>006</string>
+      </property>
+     </item>
+     <item row="12" column="1">
+      <property name="text">
+       <string>012</string>
+      </property>
+     </item>
+     <item row="12" column="2">
+      <property name="text">
+       <string>018</string>
+      </property>
+     </item>
+     <item row="13" column="0">
+      <property name="text">
+       <string>007</string>
+      </property>
+     </item>
+     <item row="13" column="1">
+      <property name="text">
+       <string>013</string>
+      </property>
+     </item>
+     <item row="13" column="2">
+      <property name="text">
+       <string>019</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

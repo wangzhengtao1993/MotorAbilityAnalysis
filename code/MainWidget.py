@@ -1,14 +1,12 @@
 from PySide2.QtWidgets import QApplication, QMessageBox, QDialog
 from PySide2.QtUiTools import QUiLoader
 from pyqtgraph.Qt import QtCore
-
 import pyqtgraph as pg
 from EMGProcess import readData as rd
 from new_user import NewUser
 from pymysql import *
 
 
-# 主页
 class HomePage():
 
     def __init__(self):
@@ -58,11 +56,6 @@ class HomePage():
         w = int(self.ui.window_width_2.currentText())
         win_set = [s, w]
         return win_set
-
-    def execute_sql(self, sql):
-        self.cursor.execute(sql)
-        for temp in self.cursor.fetchall():
-            print(temp)
 
     # 新建病历
     def new_user(self):
