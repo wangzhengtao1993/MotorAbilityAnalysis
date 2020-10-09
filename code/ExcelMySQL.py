@@ -5,7 +5,7 @@ from pymysql import *
 
 class ExcelMySQL(object):
 
-    def __init__(self,folder):
+    def __init__(self, folder):
         # 创建链接
         self.conn = connect(host='localhost', port=3306, user='root',
                             password='123456', database='motor_ability_analysis',
@@ -59,6 +59,7 @@ class ExcelMySQL(object):
 
 
     def run(self):
+        pass
 
 
 

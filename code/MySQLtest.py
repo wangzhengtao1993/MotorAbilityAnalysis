@@ -1,6 +1,7 @@
 # author:wzt
 # import pymysql
 from pymysql import *
+from pymysql import *
 
 
 class ExcelMySQL(object):

@@ -1,24 +1,20 @@
 from PySide2.QtWidgets import QApplication, QMessageBox, QDialog
 from PySide2.QtUiTools import QUiLoader
 from pyqtgraph.Qt import QtCore
-import time
+
 import pyqtgraph as pg
 from EMGProcess import readData as rd
-
-
-# from EMGProcess import processingSetting as ps
+from new_user import NewUser
 
 
 # 主页
 class HomePage():
-    # 默认窗口设置
-    # win_setting = []
 
     def __init__(self):
         # 自定义绘图窗口
         QUiLoader().registerCustomWidget(pg.PlotWidget)
         # 加载主页ui
-        self.ui = QUiLoader().load('UI/Home.ui')
+        self.ui = QUiLoader().load('ui_design/main.ui')
         # 初始化绘图窗口
         self.init_plot()
         self.ui.reset_plot_btn.clicked.connect(self.init_plot)
@@ -114,76 +110,8 @@ class HomePage():
             EMG_plot.plot(t, plotdata, pen=pg.mkPen('r'))
 
 
-class NewFile():
-    ID = {}  # 初始化空字典
-    id = 0  # 初始化id
-    year = time.strftime("%Y", time.localtime())  # 获得当前年份
-
-    def __init__(self):
-        # 从文件中加载UI定义
-        # 从 UI 定义中动态 创建一个相应的窗口对象
-        # 注意：里面的控件对象也成为窗口对象的属性了
-        # 比如 self.ui.button , self.ui.textEdit
-        self.ui = QUiLoader().load('UI/NewFile.ui')  # 路径用/，以免被认成转义，与系统用法不冲突
-        # 槽函数，点击按钮调用对应函数
-        self.ui.save_btn.clicked.connect(self.save)
-        self.ui.cancel_btn.clicked.connect(self.cancel)
-
-    def save(self):
-        # 获取QLineEDit文本框内容
-        id = self.ui.id.text()
-        name = self.ui.name.text()
-        gender = self.ui.gender.currentText()
-        birthday = self.ui.birthday.text()
-        age = int(self.year) - int(birthday)  # 计算年龄
-        hight = self.ui.hight.text()
-        weight = self.ui.weight.text()
-        self.ID[id] = [name, gender, str(age), hight, weight]
-        self.id = id
-        # 判断填写信息是否正确
-        if id == '' or name == '' or birthday == '':
-            QMessageBox.about(self.ui, 'Warning', '必要信息缺失')
-        elif id.isdigit() == False:
-            QMessageBox.about(self.ui, 'Warning', '病历号只能为数字')
-        elif len(birthday) != 4:
-            QMessageBox.about(self.ui, 'Warning', '生日仅能为4位年份')
-        else:
-            self.ui.close()  # 确认信息正确后关闭窗口
-            # print('ID：' + id)
-            # print('Name：' + name)
-            # print('Gender：' + gender)
-            # print('Birthday：' + birthday)
-            # print('Hight：' + hight)
-            # print('Weight：' + weight)
-
-        # self.ui.close()
-
-    def getProfile(self):
-        # 返回ID字典
-        return self.ID
-
-    def getID(self):
-        # 返回ID值
-        return self.id
-
-    def cancel(self):
-        self.ui.close()
-
-
-class ProcessingSetting():
-    window_setting = []
-
-    def __init__(self):
-        self.ui = QUiLoader().load('UI/SlidWindowSetting.ui')  # 路径用/，以免被认成转义，与系统用法不冲突
-        self.ui.OK_btn.clicked.connect(self.OK)
-        self.ui.cancel_btn.clicked.connect(self.cancel)
-
-    def OK(self):
-        s = int(self.ui.window_step.currentText())
-        w = int(self.ui.window_width.currentText())
-        self.window_setting = [s, w]
-        self.ui.close()
-        return self.window_setting
-
-    def cancel(self):
-        self.ui.close()
+if __name__ == '__main__':
+    app = QApplication([])
+    homepage = HomePage()
+    homepage.ui.show()
+    app.exec_()
