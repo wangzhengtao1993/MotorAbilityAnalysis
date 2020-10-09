@@ -3,7 +3,8 @@
 from pymysql import *
 
 
-class JD(object):
+class ExcelMySQL(object):
+
     def __init__(self):
         # 创建链接
         self.conn = connect(host='localhost', port=3306, user='root', password='123456', database='jingdong',
