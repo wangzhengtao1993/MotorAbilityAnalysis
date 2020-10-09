@@ -13,6 +13,8 @@ from openpyxl.chart import (
     BarChart,
     LineChart
 )
+from tkinter import filedialog
+import tkinter as tk
 
 
 
@@ -342,14 +344,16 @@ class EMGProcess(object):
 
     def run(self):
         # 1.另存为高版本，测试文件重命名对应动作
+
         self.save_as_high_ver()
-        self.rename_test_file()
+
+        # self.rename_test_file()
         # # 2.肌电信号预处理，矫正零偏，计算RMS
-        self.new_columns()
+        # self.new_columns()
         # # # 3. 插入图像
-        self.plot_in_excel()
+        # self.plot_in_excel()
         # 4. 提取最大值
-        self.max_mean()
+        # self.max_mean()
 
 
 def main():
@@ -358,14 +362,22 @@ def main():
     folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_200721"
     folder = r"D:\code\运动能力分析实验\0923zw_2020_09_23_152448"
     # folder = r"D:\code\运动能力分析实验\0922gxw_2020_09_22_192035"
-    folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_191402"
+    folder = r"D:\code\运动能力分析实验\0921why_2020_09_21_090434"
+    print("folder:", folder)
     subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
     subject = r"D:\code\运动能力分析实验\王晶.xlsx"
     # subject = r"D:\code\运动能力分析实验\曾威.xlsx"
     # # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
     # subject = r"D:\code\运动能力分析实验\肖凌云.xlsx"
+    root = tk.Tk()
+    root.withdraw()
+    folder = filedialog.askdirectory()
+    root.destroy()
+    print("path",folder)
+    r = folder.replace("/", "\\")
+    print("r:", r)
 
-    EP = EMGProcess(folder, subject)
+    EP = EMGProcess(r, subject)
     EP.run()
 
 

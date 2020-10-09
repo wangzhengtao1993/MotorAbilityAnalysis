@@ -8,6 +8,7 @@ from new_user import NewUser
 from new_test import NewTest
 
 
+
 class HomePage():
 
     def __init__(self):
