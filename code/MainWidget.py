@@ -5,6 +5,7 @@ from pyqtgraph.Qt import QtCore
 import pyqtgraph as pg
 from EMGProcess import readData as rd
 from new_user import NewUser
+from pymysql import *
 
 
 # 主页
@@ -13,6 +14,13 @@ class HomePage():
     def __init__(self):
         # 自定义绘图窗口
         QUiLoader().registerCustomWidget(pg.PlotWidget)
+
+        self.conn = connect(host='localhost', port=3306, user='root',
+                            password='123456', database='motor_ability_analysis',
+                            charset='utf8')
+        # 获得cursor对象
+        self.cursor = self.conn.cursor()
+        print("database motor_ability_analysis connected")
         # 加载主页ui
         self.ui = QUiLoader().load('ui_design/main.ui')
         # 初始化绘图窗口
@@ -23,7 +31,8 @@ class HomePage():
         # self.ui.window_step.setText(str(self.win_setting[0]) + 'ms')
         # self.ui.window_width.setText(str(self.win_setting[1]) + 'ms')
         # 槽函数
-        self.ui.newfile_btn.clicked.connect(self.newfile)
+        self.ui.new_user_btn.clicked.connect(self.new_user)
+        self.ui.open_user_btn.clicked.connect(self.open_user)
         self.ui.plot_btn.clicked.connect(self.multpolt)
         # self.ui.window_setting_btn.clicked.connect(self.showWindowSetting)
 
@@ -50,23 +59,49 @@ class HomePage():
         win_set = [s, w]
         return win_set
 
-    # 新建病历
-    def newfile(self):
-        newfile = NewFile()
-        newfile.ui.show()
-        newfile.ui.exec_()
-        file = newfile.getProfile()
-        newid = newfile.getID()
-        print(file)
-        print(file[newid])
+    def execute_sql(self, sql):
+        self.cursor.execute(sql)
+        for temp in self.cursor.fetchall():
+            print(temp)
 
-        # 显示病历信息
-        self.ui.id.setText(str(newid))
-        self.ui.name.setText(file[newid][0])
-        self.ui.gender.setText(file[newid][1])
-        self.ui.age.setText(file[newid][2])
-        self.ui.hight.setText(file[newid][3])
-        self.ui.weight.setText(file[newid][4])
+    # 新建病历
+    def new_user(self):
+        # new_user = NewUser()
+        # new_user.ui.show()
+        # new_user.ui.exec_()
+        sql = "select max(user_id) from t_user"
+        self.cursor.execute(sql)
+        result = self.cursor.fetchone()
+        print("result", result)
+        user_id = result[0]
+        print(user_id)
+        self.show_user_info(user_id)
+
+    def open_user(self):
+        print("open")
+        user_id = self.ui.le_uesr_id.text()
+        self.show_user_info(user_id)
+
+    def show_user_info(self, user_id):
+        user_id = int(user_id)
+        sql = "select * from t_user where user_id = %s" % user_id
+        print("sql:", sql)
+        self.cursor.execute(sql)
+        user_info = self.cursor.fetchone()
+        print(user_info)
+        self.ui.l_user_id.setText(str(user_info[0]))
+        self.ui.l_name.setText(str(user_info[1]))
+        self.ui.l_gender.setText(str(user_info[2]))
+        self.ui.l_year_of_birth.setText(str(user_info[3]))
+        self.ui.l_handedness.setText(str(user_info[4]))
+        self.ui.l_height.setText(str(user_info[5]))
+        self.ui.l_weight.setText(str(user_info[6]))
+        self.ui.l_waistline.setText(str(user_info[7]))
+        self.ui.l_upperarm.setText(str(user_info[8]))
+        self.ui.l_forearm.setText(str(user_info[9]))
+        self.ui.l_thigh.setText(str(user_info[10]))
+        self.ui.l_shank.setText(str(user_info[11]))
+        print("user info is shown on Widget")
 
     # 绘图
     def multpolt(self):
