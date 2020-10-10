@@ -120,7 +120,6 @@ class NewTest(QDialog):
             print("saving as .xlsx")
             for file in file_list:
                 file_done_number += 1
-                print(file_done_number)
                 self.ui.progressBar.setValue(file_done_number / file_num * 100)
 
                 # 将文件名与后缀分开
@@ -153,12 +152,10 @@ class NewTest(QDialog):
             sql = """INSERT INTO t_file_cfg (user_id, motion, active, mvc, passive) 
             VALUES (%s, %s, %s, %s, %s)"""
             self.cursor.execute(sql, file_cfg)
-        # self.conn.commit()
+        self.conn.commit()
 
     def save_emg_to_database(self, folder):
-        keyword = "Odau"
         path = folder + r"/Process/"
-        file_list = os.listdir(path)
         log_path = path + "log.txt"
         log_info = open(log_path, "r").readlines()
         flag = False
@@ -171,13 +168,18 @@ class NewTest(QDialog):
         if not flag:
             print("saving")
             self.get_raw_emg(path)
-            info = "raw emg have been saved to database\n"
-            self.create_log(folder + r"/Process/", info)
+            msg = "raw emg have been saved to database\n"
+            self.create_log(folder + r"/Process/", msg)
 
     def get_raw_emg(self, path):
         keyword = "Odau"
         file_list = os.listdir(path)
+        file_num = len(file_list)
+        file_done_number = 0
+
         for file in file_list:
+            file_done_number += 1
+            self.ui.progressBar.setValue(file_done_number / file_num * 100)
             if keyword in file:
                 test_time = file[0:26]
                 print("test_time", test_time)
@@ -193,8 +195,8 @@ class NewTest(QDialog):
                     data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
 
                 sql = """INSERT INTO t_emg_upper 
-                (test_time,frame,time,emg_1,emg_2,emg_3,emg_4,emg_5,emg_6) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                (test_time,user_id, frame,time,emg_1,emg_2,emg_3,emg_4,emg_5,emg_6) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
                 #
                 for r in range(0, frame_num):
                     print(r)
@@ -206,7 +208,8 @@ class NewTest(QDialog):
                     emg_4 = float(data["EMG_4"][r])
                     emg_5 = float(data["EMG_5"][r])
                     emg_6 = float(data["EMG_6"][r])
-                    values = (test_time, frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
+
+                    values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
                     # 执行sql语句
 
                     self.cursor.execute(sql, values)
