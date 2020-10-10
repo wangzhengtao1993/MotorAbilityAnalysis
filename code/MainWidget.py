@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QApplication, QMessageBox, QDialog
+from PySide2.QtWidgets import QApplication, QMessageBox, QDialog, QWidget
 from PySide2.QtUiTools import QUiLoader
 from pyqtgraph.Qt import QtCore
 import pyqtgraph as pg
@@ -8,8 +8,7 @@ from new_user import NewUser
 from new_test import NewTest
 
 
-
-class HomePage():
+class HomePage(QWidget):
 
     def __init__(self):
         # 自定义绘图窗口
@@ -27,7 +26,6 @@ class HomePage():
         self.init_plot()
         self.ui.reset_plot_btn.clicked.connect(self.init_plot)
         # 显示默认窗口设置
-
         # self.ui.window_step.setText(str(self.win_setting[0]) + 'ms')
         # self.ui.window_width.setText(str(self.win_setting[1]) + 'ms')
         # 槽函数
@@ -38,7 +36,7 @@ class HomePage():
         # self.ui.window_setting_btn.clicked.connect(self.showWindowSetting)
 
     def init_plot(self):
-        muscle = ['', '三角肌前束', '三角肌中束', '肱二头肌', '肱三头肌', \
+        muscle = ['', '三角肌前束', '三角肌中束', '肱二头肌', '肱三头肌',
                   '腕屈肌', '腕伸肌', '指浅屈肌', '指伸肌']
         for i in range(1, 9):
             EMG_plot = getattr(self.ui, 'EMG_plot_0' + str(i))  # 不是很懂，但是能用
