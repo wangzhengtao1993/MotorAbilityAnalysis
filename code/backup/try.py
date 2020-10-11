@@ -3,27 +3,15 @@ from tkinter import filedialog
 
 from pymysql import *
 
-user_id = 4
-conn = connect(host='localhost', port=3306, user='root',
-               password='123456', database='motor_ability_analysis', charset='utf8')
-cursor = conn.cursor()
+import os
+f = r"D:\code\运动能力分析实验\0921why_2020_09_21_100147\Process\0921_2020_09_21_100147_022_Odau_1_passive_屈膝.xlsx"
+folder, file = os.path.split(f)
 
-motion_mode = "active"
-motion_name = "屈肩"
-
-
-sql = """SELECT %s FROM `t_file_cfg` WHERE (`user_id` = '%s' and motion = '%s') """ % (motion_mode, user_id, motion_name)
+print(folder)
+print(file)
 
 
 
-cursor.execute(sql)
-t_file_cfg = cursor.fetchone()
-print(t_file_cfg[0])
-
-motion_name = {1: "上肢静息",
-               2: "屈肩"}
-
-print(motion_name[1])
 
 # motion_name = {"上肢静息": 0,
 #                "屈肩": 1,

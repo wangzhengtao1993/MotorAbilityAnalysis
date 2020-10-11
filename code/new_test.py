@@ -83,120 +83,6 @@ class NewTest(QDialog):
         directory = directory.replace("/", "\\")
         return directory
 
-    def save_to_database(self):
-        if self.debug:
-            pass
-        else:
-            self.conn.commit()
-
-    def get_upper_directory(self):
-        # 1.更改标记，确定上下肢
-        self.upper_limb_flag = True
-        # 2. 获取文件夹路径
-        self.upper_directory = self.get_directory()
-        # 3.保存为高版本
-        self.save_as_high_ver(self.upper_directory)
-        # 4. 保存数据至数据库
-        self.save_emg_to_database(self.upper_directory)
-        # 5. 更新显示
-        self.update_user_info()
-
-    def get_lower_directory(self):
-        self.upper_limb_flag = False
-        self.lower_directory = self.get_directory()
-        self.save_as_high_ver(self.lower_directory)
-        self.save_emg_to_database(self.lower_directory)
-        self.update_user_info()
-
-    def save_as_high_ver(self, directory):
-        """
-        源文件格式错误，另存为xlsx
-        """
-        # 1.创建子文件夹储存数据
-        process_directory = directory + r"/Process/"
-        if os.path.exists(process_directory):
-            print("process folder exists")
-        else:
-            os.mkdir(process_directory)
-            print("process folder created")
-        file_list = os.listdir(process_directory)
-        # 2.判断文件是否已经转换
-        if len(file_list) > 0:
-            self.ui.progressBar.setValue(100)
-            print("文件已转换")
-        else:
-            # 1.获得当前目录下所有文件名
-            file_list = os.listdir(directory)
-            file_num = len(file_list)
-            file_done_number = 0
-            # 2.打开excel处理程序，固定写法
-            excel = win32.gencache.EnsureDispatch('Excel.Application')
-            # excel.Application.Visible = False
-            print("saving as .xlsx")
-            for file in file_list:
-                file_done_number += 1
-                self.ui.progressBar.setValue(file_done_number / file_num * 100)
-                # 将文件名与后缀分开
-                file_name, suff = os.path.splitext(file)
-                if suff == ".xls":
-                    wb = excel.Workbooks.Open(directory + r"/" + file)
-                    # wb.Application.Visible = False
-                    # print("debug", process_folder + file + "x")
-                    new_file_path = directory + r"/Process/" + file + "x"
-                    wb.SaveAs(new_file_path, FileFormat=51)
-                    # FileFormat = 51 is for .xlsx extension
-                    # FileFormat = 56 is for .xls extension
-                    print("%s has been saved as .xlsx" % file)
-                    wb.Close()
-            excel.Application.Quit()
-            log_info = "All files have been saved as .xlsx\n"
-            print(log_info)
-            directory = directory + r"/Process/"
-            self.create_log(directory, log_info)
-
-        self.rename_test_file(process_directory)
-
-    def rename_test_file(self, process_directory):
-        # 1.获得文件名
-        file_list = os.listdir(process_directory)
-        # f = file_list[2]  # 为防止得到log文件名，所以选序号大于0的文件
-        # print(f[0:26])
-        # 2.从数据库获得文件编号表
-        motion_name_list = ["上肢静息", "屈肩", "伸肩", "屈肘", "伸肘", "屈腕", "伸腕"]
-        motion_mode_list = ["主动", "MVC", "被动"]
-
-        for motion_name in motion_name_list:
-            for motion_mode in motion_mode_list:
-                file_id = self.get_file_id(motion_name, motion_mode)
-                print(motion_mode, motion_name, file_id)
-
-        print("文件已重命名")
-
-        keyword = "Odau"
-        for file in file_list:
-            if "new_name.txt" in file_list:
-                print("已重命名")
-                break
-            else:
-                if keyword in file:
-                    print("file", file[-15:-12])
-                    src_file_id = file[-15:-12]
-                    for motion_name in motion_name_list:
-                        for motion_mode in motion_mode_list:
-                            dst_file_id = self.get_file_id(motion_name, motion_mode)
-                            print(motion_mode, motion_name, file_id)
-
-                            if src_file_id == dst_file_id:
-                                dst_name = f[:-15] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
-                                           file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
-                                self.log_create("new_name", dst_name + "\n")
-
-                                if os.path.exists(self.process_folder + file):
-                                    os.rename(self.process_folder + file, self.process_folder + dst_name)
-                                    print("rename:", dst_name)
-                                else:
-                                    pass
-
     def get_file_id(self, motion_name, motion_mode):
         # 从表t_file_cfg中选择motion_name 和 motion_mode对应的文件名
         sql = """SELECT %s FROM `t_file_cfg` WHERE (`user_id` = '%s' and motion = '%s') """ \
@@ -220,75 +106,201 @@ class NewTest(QDialog):
             self.cursor.execute(sql, file_cfg)
         self.save_to_database()
 
-    def get_table_name(self):
-        pass
+    def save_to_database(self):
+        if self.debug:
+            pass
+        else:
+            self.conn.commit()
 
-    def save_emg_to_database(self, folder):
-        path = folder + r"/Process/"
-        log_path = path + "log.txt"
-        log_info = open(log_path, "r").readlines()
-        flag = False
-        for data in log_info:
-            if data == "raw emg have been saved to database\n":
-                flag = True
-                print("raw emg have been saved to database")
-                break
+    def get_upper_directory(self):
+        # 1.更改标记，确定上下肢
+        self.upper_limb_flag = True
+        # 2. 获取文件夹路径
+        self.upper_directory = self.get_directory()
+        # 3.保存为高版本
+        self.save_as_high_ver(self.upper_directory)
+        # 4. 保存数据至数据库
+        # self.save_emg_to_database(self.upper_directory)
+        # 5. 更新显示
+        self.update_user_info()
 
-        if not flag:
-            print("saving")
-            # self.get_raw_emg(path)
-            msg = "raw emg have been saved to database\n"
-            self.create_log(folder + r"/Process/", msg)
+    def get_lower_directory(self):
+        self.upper_limb_flag = False
+        self.lower_directory = self.get_directory()
+        self.save_as_high_ver(self.lower_directory)
+        # self.save_emg_to_database(self.lower_directory)
+        self.update_user_info()
 
-    def get_raw_emg(self, path):
+    def save_as_high_ver(self, directory):
+        """
+        源文件格式错误，另存为xlsx
+        """
+        # 1.创建子文件夹储存数据
+        process_directory = directory + r"/Process/"
+        if os.path.exists(process_directory):
+            print("process folder exists")
+        else:
+            os.mkdir(process_directory)
+            self.create_log(process_directory, "")
+            print("process folder created")
+        file_list = os.listdir(process_directory)
+        # 2.判断文件是否已经转换
+        log_info = "All files have been saved as .xlsx\n"
+        if self.read_log(process_directory, log_info):
+            self.ui.progressBar.setValue(100)
+            print("文件已转换")
+        else:
+            # 1.获得当前目录下所有文件名
+            file_list = os.listdir(directory)
+            file_num = len(file_list)
+            file_done_number = 0
+            # 2.打开excel处理程序，固定写法
+            excel = win32.gencache.EnsureDispatch('Excel.Application')
+            # excel.Application.Visible = False
+            print("saving as .xlsx")
+            for file in file_list:
+                file_done_number += 1
+                self.ui.progressBar.setValue(file_done_number / file_num * 20)
+                # 将文件名与后缀分开
+                file_name, suff = os.path.splitext(file)
+                if suff == ".xls":
+                    wb = excel.Workbooks.Open(directory + r"/" + file)
+                    # wb.Application.Visible = False
+                    # print("debug", process_folder + file + "x")
+                    new_file_path = directory + r"/Process/" + file + "x"
+                    wb.SaveAs(new_file_path, FileFormat=51)
+                    # FileFormat = 51 is for .xlsx extension
+                    # FileFormat = 56 is for .xls extension
+                    print("%s has been saved as .xlsx" % file)
+                    wb.Close()
+            excel.Application.Quit()
+
+            print(log_info)
+            directory = directory + r"/Process/"
+            self.create_log(directory, log_info)
+
+        # 重命名
+        print("debug")
+        self.rename_test_file(process_directory)
+
+    def rename_test_file(self, process_directory):
+        # 1. 判断是否重命名
+        log_info = "all files have been renamed\nraw emg data has been saved in database\n"
+        if not self.read_log(process_directory, log_info):
+            # 2.获得文件列表
+            file_list = os.listdir(process_directory)
+            file_num = len(file_list)
+            file_done_number = 0
+            # 3.从数据库获得文件编号表
+            if self.upper_limb_flag:
+                motion_name_list = ["上肢静息", "屈肩", "伸肩", "屈肘", "伸肘", "屈腕", "伸腕"]
+            else:
+                motion_name_list = ["下肢静息", "屈髋", "伸髋", "屈膝", "伸膝", "踝背伸", "踝跖屈"]
+            motion_mode_list = ["active", "MVC", "passive"]
+
+            for motion_name in motion_name_list:
+                for motion_mode in motion_mode_list:
+                    file_id = self.get_file_id(motion_name, motion_mode)
+                    print(motion_mode, motion_name, file_id)
+                    # 4.重命名
+                    for file in file_list:
+                        # print("file", file[-15:-12])
+                        dst_file_id = self.get_file_id(motion_name, motion_mode)
+                        # print(motion_mode, motion_name, file_id)
+                        keyword = "_" + dst_file_id + "_"
+                        file_name, suff = os.path.splitext(file)
+                        file_done_number += 1
+                        self.ui.progressBar.setValue(file_done_number / file_num * 80 + 20)
+                        if keyword in file_name:
+                            dst_file_name = file_name + "_" + motion_mode + "_" + motion_name + suff
+                            if os.path.exists(process_directory + file):
+                                os.rename(process_directory + file, process_directory + dst_file_name)
+                                renamed_file = process_directory + dst_file_name
+                                print("rename:", dst_file_name)
+                                self.save_emg_to_database(renamed_file, motion_mode, motion_name)
+                            else:
+                                pass
+            # 5.创建日志
+            self.ui.progressBar.setValue(100)
+            print(log_info)
+            self.create_log(process_directory, log_info)
+        else:
+            pass
+
+    def save_emg_to_database(self, renamed_file, motion_mode, motion_name):
         keyword = "Odau"
-        file_list = os.listdir(path)
-        file_num = len(file_list)
-        file_done_number = 0
+        if keyword in renamed_file:
+            # 获得测试时间
+            directory, file_name = os.path.split(renamed_file)
+            test_time = file_name[0:26]
+            # 生成表名
+            motion_name_dic = {"上肢静息": "_rest_upper",
+                               "下肢静息": "_rest_lower",
+                               "屈肩": "_shoulder_flexion",
+                               "伸肩": "_shoulder_extension",
+                               "屈肘": "_elbow_flexion",
+                               "伸肘": "_elbow_extension",
+                               "屈腕": "_wrist_flexion",
+                               "伸腕": "_wrist_extension",
+                               "屈髋": "_hip_flexion",
+                               "伸髋": "_hip_extension",
+                               "屈膝": "_knee_flexion",
+                               "伸膝": "_knee_extension",
+                               "踝背伸": "_ankle_flexion",
+                               "踝跖屈": "_ankle_extension",
+                               }
+            if motion_name == "上肢静息":
+                table_name = "t_emg_rest_upper"
+            elif motion_name == "下肢静息":
+                table_name = "t_emg_rest_lower"
+            else:
+                table_name = "t_emg_" + motion_mode + motion_name_dic[motion_name]
+            sql = "INSERT IGNORE INTO " + table_name + """(test_time,user_id, frame,time,emg_1,emg_2,emg_3,emg_4,emg_5,emg_6) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            print(sql)
 
-        for file in file_list:
-            file_done_number += 1
-            self.ui.progressBar.setValue(file_done_number / file_num * 100)
-            if keyword in file:
-                test_time = file[0:26]
-                print("test_time", test_time)
-                data = pd.read_excel(path + file, header=4)
-                frame_num = len(data)
-                print("frame_num:", frame_num)
-                data["time"] = data["Frame"] / 1000
-                for i in range(1, 7):
-                    EMG = ("EMG_" + str(i))
-                    analog = ("Analog_" + str(i))
-                    column = data[analog]
-                    emg_mean = column.mean()
-                    data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
+            data = pd.read_excel(renamed_file, header=4)
+            frame_num = len(data)
+            data["time"] = data["Frame"] / 1000
+            for i in range(1, 7):
+                EMG = ("EMG_" + str(i))
+                analog = ("Analog_" + str(i))
+                column = data[analog]
+                emg_mean = column.mean()
+                data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
 
-                sql = """INSERT INTO t_emg_upper 
-                (test_time,user_id, frame,time,emg_1,emg_2,emg_3,emg_4,emg_5,emg_6) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-                #
-                for r in range(0, frame_num):
-                    print(r)
-                    frame = int(data["Frame"][r])
-                    time = float(data["time"][r])
-                    emg_1 = float(data["EMG_1"][r])
-                    emg_2 = float(data["EMG_2"][r])
-                    emg_3 = float(data["EMG_3"][r])
-                    emg_4 = float(data["EMG_4"][r])
-                    emg_5 = float(data["EMG_5"][r])
-                    emg_6 = float(data["EMG_6"][r])
+            for r in range(0, frame_num):
+                frame = int(data["Frame"][r])
+                time = float(data["time"][r])
+                emg_1 = float(data["EMG_1"][r])
+                emg_2 = float(data["EMG_2"][r])
+                emg_3 = float(data["EMG_3"][r])
+                emg_4 = float(data["EMG_4"][r])
+                emg_5 = float(data["EMG_5"][r])
+                emg_6 = float(data["EMG_6"][r])
 
-                    values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
-                    # 执行sql语句
-
-                    self.cursor.execute(sql, values)
-                self.save_to_database()
+                values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
+                # 执行sql语句
+                self.cursor.execute(sql, values)
+            self.save_to_database()
+        else:
+            pass
 
     @staticmethod
-    def create_log(directory, info):
+    def create_log(directory, log_info):
         full_path = directory + "log" + '.txt'
         file = open(full_path, 'a')
-        file.write(info)
+        file.write(log_info)
+
+    @staticmethod
+    def read_log(directory, log_info):
+        log_path = directory + "log.txt"
+        all_log_info = open(log_path, "r").readlines()
+        if log_info in all_log_info:
+            print(log_info)
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
