@@ -33,8 +33,8 @@ class NewTest(QDialog):
         print("sql:", sql)
         self.cursor.execute(sql)
         self.user_info = self.cursor.fetchone()
-        self.upper_folder = ""
-        self.lower_folder = ""
+        self.upper_directory = ""
+        self.lower_directory = ""
         self.update_user_info()
         self.ui.upper_folder_btn.clicked.connect(self.get_upper_folder)
         self.ui.lower_folder_btn.clicked.connect(self.get_lower_folder)
@@ -42,6 +42,7 @@ class NewTest(QDialog):
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
         self.ui.progressBar.setValue(0)
+
 
     # def __del__(self):
     #     self.cursor.close()
@@ -58,42 +59,50 @@ class NewTest(QDialog):
         self.__del__()
 
     @staticmethod
-    def get_path():
+    def get_directory():
+        # tk模块固定写法
         root = tk.Tk()
         root.withdraw()
         directory = filedialog.askdirectory()
+        # 替换斜杠，不然会报错
         directory = directory.replace("/", "\\")
-
         return directory
 
     def get_upper_folder(self):
-        self.upper_folder = self.get_path()
-        self.save_as_high_ver(self.upper_folder)
-        self.save_emg_to_database(self.upper_folder)
+        # 1.更改标记，确定上下肢
+        self.upper_limb_flag = True
+        # 2. 获取文件夹路径
+        self.upper_directory = self.get_directory()
+        # 3.保存为高版本
+        self.save_as_high_ver(self.upper_directory)
+        # 4. 保存数据至数据库
+        self.save_emg_to_database(self.upper_directory)
+        # 5. 更新显示
         self.update_user_info()
 
     def get_lower_folder(self):
-        self.lower_folder = self.get_path()
-        self.save_as_high_ver(self.lower_folder)
-        self.save_emg_to_database(self.lower_folder)
+        self.upper_limb_flag = False
+        self.lower_directory = self.get_directory()
+        self.save_as_high_ver(self.lower_directory)
+        self.save_emg_to_database(self.lower_directory)
         self.update_user_info()
 
     def update_user_info(self):
-        if self.upper_folder and self.lower_folder == "":
+        if self.upper_directory and self.lower_directory == "":
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s未导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_folder, self.lower_folder))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
             self.ui.progressBar.setValue(100)
-        elif self.lower_folder and self.upper_folder == "":
+        elif self.lower_directory and self.upper_directory == "":
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s已导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_folder, self.lower_folder))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
             self.ui.progressBar.setValue(100)
-        elif self.lower_folder and self.upper_folder:
+        elif self.lower_directory and self.upper_directory:
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s已导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_folder, self.lower_folder))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
             self.ui.progressBar.setValue(100)
         else:
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s未导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_folder, self.lower_folder))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
 
     def save_as_high_ver(self, path):
         """
@@ -136,9 +145,53 @@ class NewTest(QDialog):
             wb.Close()
             excel.Application.Quit()
             info = "All files have been saved as .xlsx\n"
+            self.rename_test_file()
             print(info)
             directory = path + r"/Process/"
             self.create_log(directory, info)
+
+    def rename_test_file(self):
+
+        file_list = os.listdir(self.process_folder)
+        f = file_list[2]
+        print(f[0:26])
+        file_name = pd.read_excel(self.subject, dtype=str)
+        print(file_name)
+
+        # 遍历所有文件
+        if self.upper_limb:
+            motion_id_start = 0
+            motion_id_end = 7
+        else:
+            motion_id_start = 7
+            motion_id_end = 14
+
+        keyword = "Odau"
+        for file in file_list:
+            if "new_name.txt" in file_list:
+                print("已重命名")
+                break
+            else:
+                if keyword in file:
+                    print("file", file[-15:-12])
+                    file_id = file[-15:-12]
+                    # 遍历所有文件id
+                    for motion in range(motion_id_start, motion_id_end):
+                        for motion_pattern in range(1, 4):
+                            # print("motion:", motion)
+                            # print("motion_pattern:", motion_pattern)
+                            motion_id = file_name.iloc[motion, motion_pattern]
+                            # print("motion_id:", motion_id)
+                            if file_id == motion_id:
+                                dst_name = f[:-15] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
+                                           file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
+                                self.log_create("new_name", dst_name + "\n")
+
+                                if os.path.exists(self.process_folder + file):
+                                    os.rename(self.process_folder + file, self.process_folder + dst_name)
+                                    print("rename:", dst_name)
+                                else:
+                                    pass
 
     def save_file_cfg(self):
         motion = ["", "", ""]
@@ -186,7 +239,7 @@ class NewTest(QDialog):
                 data = pd.read_excel(path + file, header=4)
                 frame_num = len(data)
                 print("frame_num:", frame_num)
-                data["time"] = data["Frame"]/1000
+                data["time"] = data["Frame"] / 1000
                 for i in range(1, 7):
                     EMG = ("EMG_" + str(i))
                     analog = ("Analog_" + str(i))
@@ -214,8 +267,6 @@ class NewTest(QDialog):
 
                     self.cursor.execute(sql, values)
                 self.conn.commit()
-
-
 
     @staticmethod
     def create_log(directory, info):
