@@ -17,7 +17,7 @@ class NewTest(QDialog):
 
     def __init__(self, user_id):
         super().__init__()
-        self.debug = True
+        self.debug = False
         self.user_id = user_id
         # 建立数据库连接
         self.conn = connect(host='localhost', port=3306, user='root',
@@ -51,6 +51,27 @@ class NewTest(QDialog):
     def reject(self):
         print("cancel")
         # self.__del__()
+
+    def update_user_info(self):
+        if self.upper_directory and self.lower_directory == "":
+            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s未导入"
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
+            self.ui.progressBar.setValue(100)
+        elif self.lower_directory and self.upper_directory == "":
+            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s已导入"
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
+            self.ui.progressBar.setValue(100)
+        elif self.lower_directory and self.upper_directory:
+            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s已导入"
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
+            self.ui.progressBar.setValue(100)
+        else:
+            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s未导入"
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
 
     @staticmethod
     def get_directory():
@@ -86,27 +107,6 @@ class NewTest(QDialog):
         self.save_as_high_ver(self.lower_directory)
         self.save_emg_to_database(self.lower_directory)
         self.update_user_info()
-
-    def update_user_info(self):
-        if self.upper_directory and self.lower_directory == "":
-            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s未导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
-                                           self.lower_directory))
-            self.ui.progressBar.setValue(100)
-        elif self.lower_directory and self.upper_directory == "":
-            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s已导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
-                                           self.lower_directory))
-            self.ui.progressBar.setValue(100)
-        elif self.lower_directory and self.upper_directory:
-            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s已导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
-                                           self.lower_directory))
-            self.ui.progressBar.setValue(100)
-        else:
-            self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s未导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
-                                           self.lower_directory))
 
     def save_as_high_ver(self, directory):
         """
@@ -150,68 +150,70 @@ class NewTest(QDialog):
                     wb.Close()
             excel.Application.Quit()
             log_info = "All files have been saved as .xlsx\n"
-            self.rename_test_file(process_directory)
             print(log_info)
             directory = directory + r"/Process/"
             self.create_log(directory, log_info)
 
+        self.rename_test_file(process_directory)
+
     def rename_test_file(self, process_directory):
         # 1.获得文件名
         file_list = os.listdir(process_directory)
-        f = file_list[2] # 为防止得到log文件名，所以选序号大于0的文件
-        print(f[0:26])
+        # f = file_list[2]  # 为防止得到log文件名，所以选序号大于0的文件
+        # print(f[0:26])
         # 2.从数据库获得文件编号表
+        motion_name_list = ["上肢静息", "屈肩", "伸肩", "屈肘", "伸肘", "屈腕", "伸腕"]
+        motion_mode_list = ["主动", "MVC", "被动"]
 
-        sql = """SELECT * FROM `t_file_cfg` WHERE `user_id` = '%s'""" % self.user_id
+        for motion_name in motion_name_list:
+            for motion_mode in motion_mode_list:
+                file_id = self.get_file_id(motion_name, motion_mode)
+                print(motion_mode, motion_name, file_id)
+
+        print("文件已重命名")
+
+        keyword = "Odau"
+        for file in file_list:
+            if "new_name.txt" in file_list:
+                print("已重命名")
+                break
+            else:
+                if keyword in file:
+                    print("file", file[-15:-12])
+                    src_file_id = file[-15:-12]
+                    for motion_name in motion_name_list:
+                        for motion_mode in motion_mode_list:
+                            dst_file_id = self.get_file_id(motion_name, motion_mode)
+                            print(motion_mode, motion_name, file_id)
+
+                            if src_file_id == dst_file_id:
+                                dst_name = f[:-15] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
+                                           file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
+                                self.log_create("new_name", dst_name + "\n")
+
+                                if os.path.exists(self.process_folder + file):
+                                    os.rename(self.process_folder + file, self.process_folder + dst_name)
+                                    print("rename:", dst_name)
+                                else:
+                                    pass
+
+    def get_file_id(self, motion_name, motion_mode):
+        # 从表t_file_cfg中选择motion_name 和 motion_mode对应的文件名
+        sql = """SELECT %s FROM `t_file_cfg` WHERE (`user_id` = '%s' and motion = '%s') """ \
+              % (motion_mode, self.user_id, motion_name)
         self.cursor.execute(sql)
-        self.user_info = self.cursor.fetchone()
-
-        # file_name = pd.read_excel(self.subject, dtype=str)
-        # print(file_name)
-        #
-        # # 遍历所有文件
-        # if self.upper_limb:
-        #     motion_id_start = 0
-        #     motion_id_end = 7
-        # else:
-        #     motion_id_start = 7
-        #     motion_id_end = 14
-        #
-        # keyword = "Odau"
-        # for file in file_list:
-        #     if "new_name.txt" in file_list:
-        #         print("已重命名")
-        #         break
-        #     else:
-        #         if keyword in file:
-        #             print("file", file[-15:-12])
-        #             file_id = file[-15:-12]
-        #             # 遍历所有文件id
-        #             for motion in range(motion_id_start, motion_id_end):
-        #                 for motion_pattern in range(1, 4):
-        #                     # print("motion:", motion)
-        #                     # print("motion_pattern:", motion_pattern)
-        #                     motion_id = file_name.iloc[motion, motion_pattern]
-        #                     # print("motion_id:", motion_id)
-        #                     if file_id == motion_id:
-        #                         dst_name = f[:-15] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
-        #                                    file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
-        #                         self.log_create("new_name", dst_name + "\n")
-        #
-        #                         if os.path.exists(self.process_folder + file):
-        #                             os.rename(self.process_folder + file, self.process_folder + dst_name)
-        #                             print("rename:", dst_name)
-        #                         else:
-        #                             pass
+        file_id = self.cursor.fetchone()[0]  # 返回元组，加[0]取值
+        return file_id
 
     def save_file_cfg(self):
-        motion = ["", "", ""]
+        file_id = ["", "", ""]
         for j in range(0, 14):
             for i in range(0, 3):
+                # 读取表格中的信息，一次存一行
                 temp = self.ui.t_file_cfg.item(j, i).text()
-                motion[i] = temp
-            header = self.ui.t_file_cfg.verticalHeaderItem(j).text()
-            file_cfg = [self.user_id, header] + motion
+                file_id[i] = temp
+            motion_name = self.ui.t_file_cfg.verticalHeaderItem(j).text()
+            file_cfg = [self.user_id, motion_name] + file_id
 
             sql = """INSERT INTO t_file_cfg (user_id, motion, active, mvc, passive) 
             VALUES (%s, %s, %s, %s, %s)"""
@@ -234,7 +236,7 @@ class NewTest(QDialog):
 
         if not flag:
             print("saving")
-            self.get_raw_emg(path)
+            # self.get_raw_emg(path)
             msg = "raw emg have been saved to database\n"
             self.create_log(folder + r"/Process/", msg)
 
@@ -290,7 +292,7 @@ class NewTest(QDialog):
 
 
 if __name__ == '__main__':
-    user_id = 1
+    user_id = 4
     app = QApplication([])
     new_test = NewTest(1)
     new_test.ui.show()

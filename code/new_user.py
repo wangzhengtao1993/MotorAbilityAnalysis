@@ -8,7 +8,6 @@ class NewUser(object):
     """
     新建受试者信息并存入数据库
     """
-
     def __init__(self):
         # 链接数据库
         self.conn = connect(host='localhost', port=3306, user='root',
@@ -24,10 +23,10 @@ class NewUser(object):
         self.ui.save_btn.clicked.connect(self.save)
         self.ui.cancel_btn.clicked.connect(self.cancel)
 
-    def __del__(self):
-        self.cursor.close()
-        self.conn.close()
-        print("database motor_ability_analysis disconnected")
+    # def __del__(self):
+    #     self.cursor.close()
+    #     self.conn.close()
+    #     print("database motor_ability_analysis disconnected")
 
     def cancel(self):
         self.ui.close()
