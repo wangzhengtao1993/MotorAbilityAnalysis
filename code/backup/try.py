@@ -1,14 +1,15 @@
 import tkinter as tk
 from tkinter import filedialog
 
-
-table_name = "wzt"
-
-sql = """INSERT INTO """+table_name+\
-                """(test_time,user_id, frame,time,emg_1,emg_2,emg_3,emg_4,emg_5,emg_6) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-print(sql)
-
+from pymysql import *
+user_id = 4
+conn = connect(host='localhost', port=3306, user='root',
+                            password='123456', database='motor_ability_analysis', charset='utf8')
+cursor = conn.cursor()
+sql = """SELECT * FROM `t_file_cfg` WHERE `user_id` = '%s'""" % user_id
+cursor.execute(sql)
+user_info = cursor.fetchall()
+print(user_info)
 
 # root = tk.Tk()
 # root.withdraw()
