@@ -2,16 +2,12 @@
 from PySide2.QtWidgets import QApplication, QMessageBox, QDialog, QFileDialog
 from PySide2.QtUiTools import QUiLoader
 from pymysql import *
+import os
 import tkinter as tk
 from tkinter import filedialog
-import os
 import win32com.client as win32
 from numpy import *
-import time
-from main import EMGProcess
-import openpyxl
 import pandas as pd
-import xlrd
 
 
 class NewTest(QDialog):
@@ -21,46 +17,44 @@ class NewTest(QDialog):
 
     def __init__(self, user_id):
         super().__init__()
+        self.debug = True
         self.user_id = user_id
+        # 建立数据库连接
         self.conn = connect(host='localhost', port=3306, user='root',
                             password='123456', database='motor_ability_analysis', charset='utf8')
         self.cursor = self.conn.cursor()
         print("database motor_ability_analysis connected")
-        # 调用ui文件
-        self.ui = QUiLoader().load('ui_design/t_file_cfg.ui')  # 路径用/，以免被认成转义，与系统用法不冲突
-
         sql = "select * from t_user where user_id = %s" % self.user_id
         print("sql:", sql)
         self.cursor.execute(sql)
         self.user_info = self.cursor.fetchone()
+
+        # 调用ui文件
+        self.ui = QUiLoader().load('ui_design/t_file_cfg.ui')  # 路径用/，以免被认成转义，与系统用法不冲突
+        self.ui.progressBar.setValue(0)  # 初始化进度条
         self.upper_directory = ""
         self.lower_directory = ""
-        self.update_user_info()
-        self.ui.upper_folder_btn.clicked.connect(self.get_upper_folder)
-        self.ui.lower_folder_btn.clicked.connect(self.get_lower_folder)
-        # 继承了QDialog，所以自带以下两个槽函数
+        self.update_user_info()  # 初始化信息显示
+
+        # 槽函数
+        self.ui.upper_folder_btn.clicked.connect(self.get_upper_directory)  # 导入上肢文件夹
+        self.ui.lower_folder_btn.clicked.connect(self.get_lower_directory)  # 导入下肢文件夹
+        # 继承了QDialog，所以自带以下两个槽函数，ok和cancel
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
-        self.ui.progressBar.setValue(0)
-
-
-    # def __del__(self):
-    #     self.cursor.close()
-    #     self.conn.close()
-    #     print("database motor_ability_analysis disconnected")
 
     def accept(self):
         self.save_file_cfg()
         print("ok")
-        self.__del__()
+        # self.__del__()
 
     def reject(self):
         print("cancel")
-        self.__del__()
+        # self.__del__()
 
     @staticmethod
     def get_directory():
-        # tk模块固定写法
+        # tk模块固定写法，打开文件夹对话框
         root = tk.Tk()
         root.withdraw()
         directory = filedialog.askdirectory()
@@ -68,7 +62,13 @@ class NewTest(QDialog):
         directory = directory.replace("/", "\\")
         return directory
 
-    def get_upper_folder(self):
+    def save_to_database(self):
+        if self.debug:
+            pass
+        else:
+            self.conn.commit()
+
+    def get_upper_directory(self):
         # 1.更改标记，确定上下肢
         self.upper_limb_flag = True
         # 2. 获取文件夹路径
@@ -80,7 +80,7 @@ class NewTest(QDialog):
         # 5. 更新显示
         self.update_user_info()
 
-    def get_lower_folder(self):
+    def get_lower_directory(self):
         self.upper_limb_flag = False
         self.lower_directory = self.get_directory()
         self.save_as_high_ver(self.lower_directory)
@@ -90,37 +90,43 @@ class NewTest(QDialog):
     def update_user_info(self):
         if self.upper_directory and self.lower_directory == "":
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s未导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
             self.ui.progressBar.setValue(100)
         elif self.lower_directory and self.upper_directory == "":
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s已导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
             self.ui.progressBar.setValue(100)
         elif self.lower_directory and self.upper_directory:
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s已导入\n下肢文件夹：%s已导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
             self.ui.progressBar.setValue(100)
         else:
             self.ui.l_user_info.setText("ID:%s\t姓名:%s\n上肢文件夹:%s未导入\n下肢文件夹：%s未导入"
-                                        % (self.user_info[0], self.user_info[1], self.upper_directory, self.lower_directory))
+                                        % (self.user_info[0], self.user_info[1], self.upper_directory,
+                                           self.lower_directory))
 
-    def save_as_high_ver(self, path):
+    def save_as_high_ver(self, directory):
         """
         源文件格式错误，另存为xlsx
         """
-        process_folder = path + r"/Process/"
-        print(process_folder)
-        if os.path.exists(process_folder):
+        # 1.创建子文件夹储存数据
+        process_directory = directory + r"/Process/"
+        if os.path.exists(process_directory):
             print("process folder exists")
         else:
-            os.mkdir(process_folder)
+            os.mkdir(process_directory)
             print("process folder created")
-        file_list = os.listdir(process_folder)
+        file_list = os.listdir(process_directory)
+        # 2.判断文件是否已经转换
         if len(file_list) > 0:
+            self.ui.progressBar.setValue(100)
             print("文件已转换")
         else:
             # 1.获得当前目录下所有文件名
-            file_list = os.listdir(path)
+            file_list = os.listdir(directory)
             file_num = len(file_list)
             file_done_number = 0
             # 2.打开excel处理程序，固定写法
@@ -130,25 +136,24 @@ class NewTest(QDialog):
             for file in file_list:
                 file_done_number += 1
                 self.ui.progressBar.setValue(file_done_number / file_num * 100)
-
                 # 将文件名与后缀分开
                 file_name, suff = os.path.splitext(file)
                 if suff == ".xls":
-                    wb = excel.Workbooks.Open(path + r"/" + file)
+                    wb = excel.Workbooks.Open(directory + r"/" + file)
                     # wb.Application.Visible = False
                     # print("debug", process_folder + file + "x")
-                    new_file_path = path + r"/Process/" + file + "x"
+                    new_file_path = directory + r"/Process/" + file + "x"
                     wb.SaveAs(new_file_path, FileFormat=51)
                     # FileFormat = 51 is for .xlsx extension
                     # FileFormat = 56 is for .xls extension
                     print("%s has been saved as .xlsx" % file)
-            wb.Close()
+                    wb.Close()
             excel.Application.Quit()
-            info = "All files have been saved as .xlsx\n"
-            self.rename_test_file()
-            print(info)
-            directory = path + r"/Process/"
-            self.create_log(directory, info)
+            log_info = "All files have been saved as .xlsx\n"
+            # self.rename_test_file()
+            print(log_info)
+            directory = directory + r"/Process/"
+            self.create_log(directory, log_info)
 
     def rename_test_file(self):
 
@@ -205,7 +210,10 @@ class NewTest(QDialog):
             sql = """INSERT INTO t_file_cfg (user_id, motion, active, mvc, passive) 
             VALUES (%s, %s, %s, %s, %s)"""
             self.cursor.execute(sql, file_cfg)
-        self.conn.commit()
+        self.save_to_database()
+
+    def get_table_name(self):
+        pass
 
     def save_emg_to_database(self, folder):
         path = folder + r"/Process/"
@@ -266,7 +274,7 @@ class NewTest(QDialog):
                     # 执行sql语句
 
                     self.cursor.execute(sql, values)
-                self.conn.commit()
+                self.save_to_database()
 
     @staticmethod
     def create_log(directory, info):
