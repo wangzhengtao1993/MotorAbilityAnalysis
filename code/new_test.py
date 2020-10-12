@@ -1,5 +1,5 @@
 # author:wzt
-from PySide2.QtWidgets import QApplication, QMessageBox, QDialog, QFileDialog, QTableWidgetItem
+from PySide2.QtWidgets import QApplication, QDialog, QTableWidgetItem
 from PySide2.QtUiTools import QUiLoader
 from pymysql import *
 import os
@@ -47,11 +47,9 @@ class NewTest(QDialog):
     def accept(self):
         self.save_file_cfg()
         print("ok")
-        # self.__del__()
 
     def reject(self):
         print("cancel")
-        # self.__del__()
 
     def update_user_info(self):
         if self.upper_directory and self.lower_directory == "":
@@ -103,7 +101,6 @@ class NewTest(QDialog):
                     # 读取表格中的信息，一次存一行
                     temp = file_id[j][i + 3]
                     self.ui.t_file_cfg.setItem(j, i, QTableWidgetItem(temp))
-
         else:
             pass
 

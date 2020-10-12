@@ -13,7 +13,6 @@ class HomePage(QWidget):
     def __init__(self):
         # 自定义绘图窗口
         QUiLoader().registerCustomWidget(pg.PlotWidget)
-
         self.conn = connect(host='localhost', port=3306, user='root',
                             password='123456', database='motor_ability_analysis',
                             charset='utf8')
