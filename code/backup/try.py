@@ -3,12 +3,7 @@ from tkinter import filedialog
 
 from pymysql import *
 
-import os
-f = r"D:\code\运动能力分析实验\0921why_2020_09_21_100147\Process\0921_2020_09_21_100147_022_Odau_1_passive_屈膝.xlsx"
-folder, file = os.path.split(f)
 
-print(folder)
-print(file)
 
 
 

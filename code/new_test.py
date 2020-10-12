@@ -1,5 +1,5 @@
 # author:wzt
-from PySide2.QtWidgets import QApplication, QMessageBox, QDialog, QFileDialog
+from PySide2.QtWidgets import QApplication, QMessageBox, QDialog, QFileDialog, QTableWidgetItem
 from PySide2.QtUiTools import QUiLoader
 from pymysql import *
 import os
@@ -35,6 +35,7 @@ class NewTest(QDialog):
         self.upper_directory = ""
         self.lower_directory = ""
         self.update_user_info()  # 初始化信息显示
+        self.set_file_cfg()  # 若file_cfg存在则显示，若不存在则显示为空
 
         # 槽函数
         self.ui.upper_folder_btn.clicked.connect(self.get_upper_directory)  # 导入上肢文件夹
@@ -90,6 +91,21 @@ class NewTest(QDialog):
         self.cursor.execute(sql)
         file_id = self.cursor.fetchone()[0]  # 返回元组，加[0]取值
         return file_id
+
+    def set_file_cfg(self):
+        sql = """SELECT * from t_file_cfg WHERE user_id = %s """ % self.user_id
+        self.cursor.execute(sql)
+        file_id = self.cursor.fetchall()
+        if file_id:
+            print(file_id)
+            for j in range(0, 14):
+                for i in range(0, 3):
+                    # 读取表格中的信息，一次存一行
+                    temp = file_id[j][i + 3]
+                    self.ui.t_file_cfg.setItem(j, i, QTableWidgetItem(temp))
+
+        else:
+            pass
 
     def save_file_cfg(self):
         file_id = ["", "", ""]
@@ -160,13 +176,12 @@ class NewTest(QDialog):
             print("saving as .xlsx")
             for file in file_list:
                 file_done_number += 1
+                print("progress:", file_done_number / file_num * 20)
                 self.ui.progressBar.setValue(file_done_number / file_num * 20)
                 # 将文件名与后缀分开
                 file_name, suff = os.path.splitext(file)
                 if suff == ".xls":
                     wb = excel.Workbooks.Open(directory + r"/" + file)
-                    # wb.Application.Visible = False
-                    # print("debug", process_folder + file + "x")
                     new_file_path = directory + r"/Process/" + file + "x"
                     wb.SaveAs(new_file_path, FileFormat=51)
                     # FileFormat = 51 is for .xlsx extension
@@ -228,12 +243,13 @@ class NewTest(QDialog):
             pass
 
     def save_emg_to_database(self, renamed_file, motion_mode, motion_name):
+        # 1.判断是否为肌电信号文件
         keyword = "Odau"
         if keyword in renamed_file:
-            # 获得测试时间
+            # 2.获得测试时间
             directory, file_name = os.path.split(renamed_file)
             test_time = file_name[0:26]
-            # 生成表名
+            # 3.生成表名
             motion_name_dic = {"上肢静息": "_rest_upper",
                                "下肢静息": "_rest_lower",
                                "屈肩": "_shoulder_flexion",
@@ -255,10 +271,11 @@ class NewTest(QDialog):
                 table_name = "t_emg_rest_lower"
             else:
                 table_name = "t_emg_" + motion_mode + motion_name_dic[motion_name]
+            # 4. 生成SQL语句，INSERT IGNORE INTO若数据存在，不重复导入
             sql = "INSERT IGNORE INTO " + table_name + """(test_time,user_id, frame,time,emg_1,emg_2,emg_3,emg_4,emg_5,emg_6) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
             print(sql)
-
+            # 5.读取数据
             data = pd.read_excel(renamed_file, header=4)
             frame_num = len(data)
             data["time"] = data["Frame"] / 1000
@@ -269,6 +286,7 @@ class NewTest(QDialog):
                 emg_mean = column.mean()
                 data[EMG] = (data[analog] - emg_mean) / 2  # 除以500倍，×1000，mV
 
+            # 6. 生成写入数据库的数据
             for r in range(0, frame_num):
                 frame = int(data["Frame"][r])
                 time = float(data["time"][r])
@@ -280,8 +298,9 @@ class NewTest(QDialog):
                 emg_6 = float(data["EMG_6"][r])
 
                 values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
-                # 执行sql语句
+                # 7.执行sql语句，导入数据
                 self.cursor.execute(sql, values)
+            # 8. 执行commit()，保存数据
             self.save_to_database()
         else:
             pass
@@ -304,7 +323,6 @@ class NewTest(QDialog):
 
 
 if __name__ == '__main__':
-    user_id = 4
     app = QApplication([])
     new_test = NewTest(1)
     new_test.ui.show()

@@ -186,92 +186,92 @@
      </item>
      <item row="1" column="0">
       <property name="text">
-       <string>002</string>
+       <string/>
       </property>
      </item>
      <item row="1" column="1">
       <property name="text">
-       <string>015</string>
+       <string/>
       </property>
      </item>
      <item row="1" column="2">
       <property name="text">
-       <string>021</string>
+       <string/>
       </property>
      </item>
      <item row="2" column="0">
       <property name="text">
-       <string>012</string>
+       <string/>
       </property>
      </item>
      <item row="2" column="1">
       <property name="text">
-       <string>013</string>
+       <string/>
       </property>
      </item>
      <item row="2" column="2">
       <property name="text">
-       <string>026</string>
+       <string/>
       </property>
      </item>
      <item row="3" column="0">
       <property name="text">
-       <string>006</string>
+       <string/>
       </property>
      </item>
      <item row="3" column="1">
       <property name="text">
-       <string>017</string>
+       <string/>
       </property>
      </item>
      <item row="3" column="2">
       <property name="text">
-       <string>022</string>
+       <string/>
       </property>
      </item>
      <item row="4" column="0">
       <property name="text">
-       <string>007</string>
+       <string/>
       </property>
      </item>
      <item row="4" column="1">
       <property name="text">
-       <string>018</string>
+       <string/>
       </property>
      </item>
      <item row="4" column="2">
       <property name="text">
-       <string>023</string>
+       <string/>
       </property>
      </item>
      <item row="5" column="0">
       <property name="text">
-       <string>010</string>
+       <string/>
       </property>
      </item>
      <item row="5" column="1">
       <property name="text">
-       <string>019</string>
+       <string/>
       </property>
      </item>
      <item row="5" column="2">
       <property name="text">
-       <string>024</string>
+       <string/>
       </property>
      </item>
      <item row="6" column="0">
       <property name="text">
-       <string>011</string>
+       <string/>
       </property>
      </item>
      <item row="6" column="1">
       <property name="text">
-       <string>020</string>
+       <string/>
       </property>
      </item>
      <item row="6" column="2">
       <property name="text">
-       <string>025</string>
+       <string/>
       </property>
      </item>
      <item row="7" column="0">
@@ -291,92 +291,92 @@
      </item>
      <item row="8" column="0">
       <property name="text">
-       <string>002</string>
+       <string/>
       </property>
      </item>
      <item row="8" column="1">
       <property name="text">
-       <string>006</string>
+       <string/>
       </property>
      </item>
      <item row="8" column="2">
       <property name="text">
-       <string>011</string>
+       <string/>
       </property>
      </item>
      <item row="9" column="0">
       <property name="text">
-       <string>015</string>
+       <string/>
       </property>
      </item>
      <item row="9" column="1">
       <property name="text">
-       <string>019</string>
+       <string/>
       </property>
      </item>
      <item row="9" column="2">
       <property name="text">
-       <string>021</string>
+       <string/>
       </property>
      </item>
      <item row="10" column="0">
       <property name="text">
-       <string>016</string>
+       <string/>
       </property>
      </item>
      <item row="10" column="1">
       <property name="text">
-       <string>017</string>
+       <string/>
       </property>
      </item>
      <item row="10" column="2">
       <property name="text">
-       <string>022</string>
+       <string/>
       </property>
      </item>
      <item row="11" column="0">
       <property name="text">
-       <string>003</string>
+       <string/>
       </property>
      </item>
      <item row="11" column="1">
       <property name="text">
-       <string>007</string>
+       <string/>
       </property>
      </item>
      <item row="11" column="2">
       <property name="text">
-       <string>012</string>
+       <string/>
       </property>
      </item>
      <item row="12" column="0">
       <property name="text">
-       <string>004</string>
+       <string/>
       </property>
      </item>
      <item row="12" column="1">
       <property name="text">
-       <string>009</string>
+       <string/>
       </property>
      </item>
      <item row="12" column="2">
       <property name="text">
-       <string>013</string>
+       <string/>
       </property>
      </item>
      <item row="13" column="0">
       <property name="text">
-       <string>005</string>
+       <string/>
       </property>
      </item>
      <item row="13" column="1">
       <property name="text">
-       <string>010</string>
+       <string/>
       </property>
      </item>
      <item row="13" column="2">
       <property name="text">
-       <string>014</string>
+       <string/>
       </property>
      </item>
     </widget>
