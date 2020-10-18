@@ -8,6 +8,7 @@ from tkinter import filedialog
 import win32com.client as win32
 from numpy import *
 import pandas as pd
+from EMGProcess import EMGProcess as ep
 
 
 class NewTest(QDialog):
@@ -299,15 +300,20 @@ class NewTest(QDialog):
                 emg_4 = float(data["EMG_4"][r])
                 emg_5 = float(data["EMG_5"][r])
                 emg_6 = float(data["EMG_6"][r])
+                rms_1 = ep.rms(emg_1)
+                print(rms_1)
 
                 values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
                 # 7.执行sql语句，导入数据
                 self.cursor.execute(sql, values)
 
+
             # 8. 执行commit()，保存数据
             self.save_to_database()
         else:
             pass
+
+
 
     @staticmethod
     def create_log(directory, log_info):
@@ -319,6 +325,7 @@ class NewTest(QDialog):
     def read_log(directory, log_info):
         log_path = directory + "log.txt"
         all_log_info = open(log_path, "r").readlines()
+        print("debug", all_log_info)
         if log_info in all_log_info:
             print(log_info)
             return True

@@ -239,18 +239,94 @@
        </widget>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="1">
-         <widget class="QLabel" name="frequency">
-          <property name="text">
-           <string>1000Hz</string>
-          </property>
-         </widget>
+       <widget class="QComboBox" name="cb_motion_name">
+        <item>
+         <property name="text">
+          <string>屈肩</string>
+         </property>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="test_time">
+        <item>
+         <property name="text">
+          <string>伸肩</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>屈肘</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>伸肘</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>屈腕</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>伸腕</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>屈髋</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>伸髋</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>屈膝</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>伸膝</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>踝背伸</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>踝跖屈</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cb_motion_mode">
+        <item>
+         <property name="text">
+          <string>主动</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>MVC</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>被动</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>2020-02-02 20：20：20</string>
+           <string>测试时间：</string>
           </property>
          </widget>
         </item>
@@ -261,24 +337,17 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_11">
+        <item row="0" column="1">
+         <widget class="QLabel" name="test_time">
           <property name="text">
-           <string>测试动作：</string>
+           <string>2020-02-02 20：20：20</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="motion">
+        <item row="1" column="1">
+         <widget class="QLabel" name="frequency">
           <property name="text">
-           <string>上肢</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>测试时间：</string>
+           <string>1000Hz</string>
           </property>
          </widget>
         </item>
@@ -394,11 +463,6 @@
             </item>
             <item>
              <property name="text">
-              <string>整流信号</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>均方根</string>
              </property>
             </item>
@@ -435,29 +499,23 @@
        <string>GroupBox</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="0">
+        <widget class="PlotWidget" name="EMG_plot_05" native="true"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="PlotWidget" name="EMG_plot_04" native="true"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="PlotWidget" name="EMG_plot_03" native="true"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="PlotWidget" name="EMG_plot_06" native="true"/>
+       </item>
        <item row="0" column="0">
         <widget class="PlotWidget" name="EMG_plot_01" native="true"/>
        </item>
        <item row="0" column="1">
         <widget class="PlotWidget" name="EMG_plot_02" native="true"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="PlotWidget" name="EMG_plot_03" native="true"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="PlotWidget" name="EMG_plot_04" native="true"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="PlotWidget" name="EMG_plot_05" native="true"/>
-       </item>
-       <item row="2" column="1">
-        <widget class="PlotWidget" name="EMG_plot_06" native="true"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="PlotWidget" name="EMG_plot_07" native="true"/>
-       </item>
-       <item row="3" column="1">
-        <widget class="PlotWidget" name="EMG_plot_08" native="true"/>
        </item>
       </layout>
      </widget>

@@ -27,6 +27,7 @@ class HomePage(QWidget):
         # 显示默认窗口设置
         # self.ui.window_step.setText(str(self.win_setting[0]) + 'ms')
         # self.ui.window_width.setText(str(self.win_setting[1]) + 'ms')
+
         # 槽函数
         self.ui.new_user_btn.clicked.connect(self.new_user)
         self.ui.open_user_btn.clicked.connect(self.open_user)
@@ -35,12 +36,15 @@ class HomePage(QWidget):
         # self.ui.window_setting_btn.clicked.connect(self.showWindowSetting)
 
     def init_plot(self):
-        muscle = ['', '三角肌前束', '三角肌中束', '肱二头肌', '肱三头肌',
-                  '腕屈肌', '腕伸肌', '指浅屈肌', '指伸肌']
+        if True:
+            muscle = ['', '三角肌前束', '三角肌中束', '肱二头肌', '肱三头肌',
+                      '腕屈肌', '腕伸肌']
+        else:
+            muscle = ['', '股直肌', '股二头肌', '半腱肌 ', '股内侧肌',
+                      '胫骨前肌', '外侧腓肠肌']
 
-        for i in range(1, 9):
+        for i in range(1, 7):
             EMG_plot = getattr(self.ui, 'EMG_plot_0' + str(i))  # 不是很懂，但是能用
-
             EMG_plot.setBackground('w')
             EMG_plot.setLabel("bottom", 't/s')
             EMG_plot.setLabel("left", 'u/' + chr(956) + 'V')
@@ -48,8 +52,14 @@ class HomePage(QWidget):
             EMG_plot.setYRange(min=0, max=y_max, padding=0)
             EMG_plot.setXRange(min=0, max=100, padding=0)
             EMG_plot.setTitle(muscle[i])
-
             # EMG_plot.clear()
+
+    def get_plot_info(self):
+        user_id = self.ui.le_uesr_id.text()
+        motion_name = self.ui.cb_motion_name.currentIndex()
+        motion_mode = self.ui.cb_motion_mode.currentIndex()
+        plot_info = [user_id, motion_name, motion_mode]
+        return plot_info
 
     # 时间窗设置
     def setWin(self):
@@ -101,17 +111,12 @@ class HomePage(QWidget):
         user_id = self.ui.l_user_id.text()
         name = self.ui.l_name.text()
         print("import new test data of ID:%s Name:%s" % (user_id, name))
-
         new_test = NewTest(user_id)
         new_test.ui.show()
         new_test.ui.exec_()
 
     # 绘图
     def multpolt(self):
-        EMG = rd()
-        FREQUENCY = EMG.FREQUENCY
-        TESTTIME = EMG.TESTTIME
-        MOTION = EMG.MOTION
         win_set = self.setWin()
 
         TESTINFO = [FREQUENCY, TESTTIME]
