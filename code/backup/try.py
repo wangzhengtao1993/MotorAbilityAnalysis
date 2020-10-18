@@ -2,11 +2,48 @@ import tkinter as tk
 from tkinter import filedialog
 
 from pymysql import *
+import pymysql
+from numpy import *
+
+
+conn = connect(host='localhost', port=3306, user='root', password='123456',
+               database='motor_ability_analysis', charset='utf8')
+cursor = conn.cursor()
+print("database motor_ability_analysis connected")
+sql = "select emg_1 from t_emg_mvc_ankle_extension "
+print("sql:", sql)
+cursor.execute(sql)
+
+raw_emg = cursor.fetchall()
+print(raw_emg)
+
+print(raw_emg[0])
 
 
 
 
 
+# data = []
+# for temp in raw_emg:
+#     print(temp[0])
+#     data.append(temp[0])
+# print(data)
+# #
+# # def output(array):
+# #     for i in range(len(array)):
+# #         for j in range(len(array[0])):
+# #             print(array[i][j],end='')
+# #             print('   ',end='')
+# #         print(' ')
+# def output(array):
+#     for i in range(len(array)):
+#         for j in range(len(array[0])):
+#             print(array[i][j], end='')
+#             print('   ', end='')
+#         print(' ')
+#
+#
+# print(output(raw_emg))
 
 # motion_name = {"上肢静息": 0,
 #                "屈肩": 1,

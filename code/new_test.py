@@ -91,10 +91,12 @@ class NewTest(QDialog):
         return file_id
 
     def set_file_cfg(self):
+
         sql = """SELECT * from t_file_cfg WHERE user_id = %s """ % self.user_id
         self.cursor.execute(sql)
         file_id = self.cursor.fetchall()
         if file_id:
+            self.ui.l_file_cfg.setText("文件定义已存在")
             print(file_id)
             for j in range(0, 14):
                 for i in range(0, 3):
@@ -146,7 +148,8 @@ class NewTest(QDialog):
 
     def save_as_high_ver(self, directory):
         """
-        源文件格式错误，另存为xlsx
+        源文件格式错误，另存为.xlsx
+        :param directory: 数据文件夹
         """
         # 1.创建子文件夹储存数据
         process_directory = directory + r"/Process/"
@@ -186,16 +189,18 @@ class NewTest(QDialog):
                     print("%s has been saved as .xlsx" % file)
                     wb.Close()
             excel.Application.Quit()
-
             print(log_info)
             directory = directory + r"/Process/"
             self.create_log(directory, log_info)
-
         # 重命名
         print("debug")
         self.rename_test_file(process_directory)
 
     def rename_test_file(self, process_directory):
+        """
+        重命名文件并将文件保存至数据库
+        :param process_directory:
+        """
         # 1. 判断是否重命名
         log_info = "all files have been renamed\nraw emg data has been saved in database\n"
         if not self.read_log(process_directory, log_info):
@@ -229,6 +234,7 @@ class NewTest(QDialog):
                                 os.rename(process_directory + file, process_directory + dst_file_name)
                                 renamed_file = process_directory + dst_file_name
                                 print("rename:", dst_file_name)
+                                """ 保存数据至数据库 """
                                 self.save_emg_to_database(renamed_file, motion_mode, motion_name)
                             else:
                                 pass
@@ -297,6 +303,7 @@ class NewTest(QDialog):
                 values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
                 # 7.执行sql语句，导入数据
                 self.cursor.execute(sql, values)
+
             # 8. 执行commit()，保存数据
             self.save_to_database()
         else:

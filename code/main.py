@@ -17,7 +17,6 @@ from tkinter import filedialog
 import tkinter as tk
 
 
-
 # win32api找不到时 pip install pywin32==225
 
 class EMGProcess(object):
@@ -35,8 +34,6 @@ class EMGProcess(object):
         self.win_set = (100, 100)  # 滑动时间窗
         self.subject = subject
         print("Path:", folder)
-
-
 
     def save_as_high_ver(self):
         """
@@ -296,11 +293,10 @@ class EMGProcess(object):
                     chart.x_axis.title = "time/s"
                     chart.y_axis.title = "RMS/mV"
                     chart.y_axis.scaling.max = 0.5
-                    rms_max_data = Reference(ws, min_col=2, max_col=7, min_row=frames+2)
+                    rms_max_data = Reference(ws, min_col=2, max_col=7, min_row=frames + 2)
                     chart.add_data(rms_max_data)
                     ws.add_chart(chart, "I20")
                     wb.save(self.process_folder + file)
-
 
     def run(self):
         # 1.另存为高版本，测试文件重命名对应动作
@@ -333,7 +329,7 @@ def main():
     root.withdraw()
     folder = filedialog.askdirectory()
     root.destroy()
-    print("path",folder)
+    print("path", folder)
     r = folder.replace("/", "\\")
     print("r:", r)
 

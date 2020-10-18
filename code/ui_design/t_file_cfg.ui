@@ -76,7 +76,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="l_file_cfg">
      <property name="text">
       <string>请输入测试文件三位编号</string>
      </property>
@@ -84,6 +84,12 @@
    </item>
    <item>
     <widget class="QTableWidget" name="t_file_cfg">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <row>
       <property name="text">
        <string>上肢静息</string>

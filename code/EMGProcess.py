@@ -1,135 +1,104 @@
 # author:wzt
 
 from numpy import *
-import re
 import numpy as np
 import pandas as pd
-import win32ui
 
 
-class readData():
-    FREQUENCY = 0
-    TESTTIME = 0
-    raw_EMG = []
-    raw = []
-    re_raw = []
-    RMS = []
-    AEMG = []
-    MOTION = []
+class EMGProcess(object):
+    class EMGProcess(object):
 
-    def __init__(self):
-        # 0代表另存为对话框，1代表打开文件对话框
-        dlg = win32ui.CreateFileDialog(1)
-        # 默认目录
-        dlg.SetOFNInitialDir('C:/')
-        # 显示对话框
-        dlg.DoModal()
-        # 获取用户选择的文件全路径
-        filename = dlg.GetPathName()
-        self.getMotion(filename)
-        self.getTesttime(filename)
-        self.getFrequency(filename)
-        self.getRawEMG(filename)
-        self.rect(self.raw)
-        # self.RMS(self.sw)
-        # self.slidwindow(self.re_raw)
+        def __init__(self, win_set):
+            self.win_set = win_set  # 滑动时间窗
 
+        @staticmethod
+        def output(array):
+            for i in range(len(array)):
+                for j in range(len(array[0])):
+                    print(array[i][j], end='')
+                    print('   ', end='')
+                print(' ')
 
+        @staticmethod
+        def emg_mean(column):
+            return column.mean()
 
+        @staticmethod
+        def rect(raw):
+            return np.fabs(raw)
 
-    def getMotion(self,filename):
-        Motion = int(re.sub("\D", "", filename))
-        motion = ['','肩关节前屈', '肩关节外展', '是肘关节屈伸', '腕关节屈伸', '手指屈伸']
-        self.MOTION = motion[Motion]
-        print('Motion:', motion[Motion])
-        return self.MOTION
-    #获得测试时间及频率
-    def getTesttime(self,filename):
-        file = open(filename, mode='r', encoding='utf-8-sig')
-        TESTDATE = file.readlines()[3]
-        TESTDATE = re.sub("\D", "", TESTDATE)  # 测试时间
-        TESTTIME = TESTDATE[4:8] + '-' + TESTDATE[2:4] + '-' + TESTDATE[0:2] + \
-                   ' ' + TESTDATE[8:10] + ':' + TESTDATE[10:12] + ':' + TESTDATE[12:16]
-        self.TESTTIME = TESTTIME
-        file.close()
-        print('debug')
-        return self.TESTTIME
-    #获得采样频率
-    def getFrequency(self,filename):
-        file = open(filename, mode='r', encoding='utf-8-sig')
-        FREQUENCY = file.readlines()[2]
-        FREQUENCY = int(re.sub("\D", "", FREQUENCY))  # 提取频率
-        self.FREQUENCY = FREQUENCY
-        file.close()
-        return self.FREQUENCY
-    #获得原始数据
-    def getRawEMG(self,filename):
-        testData = []
-        c = 0
-        with open(filename, mode='r', encoding='utf-8-sig') as txtData:
-            lines = txtData.readlines()[5:]#从第5行开始逐行读
-            frames = len(lines) #获得总帧数
-            raw = zeros((frames,17), dtype=float) #初始化零矩阵帧数行，17列
-            raw_row = 0
-            for line in lines:
-                lineData = line.strip('\n').split('\t')
-                raw[raw_row] = lineData[:] #调用整行
-                raw_row += 1
-            # print('raw[1]:', raw[1])
-            self.raw = raw
-        return self.raw
-    #整流
-    def rect(self,raw):
-        self.re_raw = np.fabs(raw)
-        return self.re_raw
-    #滑动时间窗
-    def slidwindow(self,re_raw,win_set):
-        #一次传入re_raw的一列
-        l = len(re_raw)
-        s = win_set[0]
-        w = win_set[1]
-        c = int((l - w) / s + 1)#处理后的帧数
-        sw = zeros((c, w), dtype=float)  # 初始化矩阵，每行是一个时间窗
-        i = 0
-        while i < l - w + 1:
-            window = array([])
-            for j in range(0, w):
-                window = np.append(window, re_raw[i + j])
-            sw[int(i / s)] = window
-            i += s
-        self.sw = sw
-        return self.sw
-    #均方根
-    def RMS(self,re_raw,win_set):
-        l = len(re_raw)
-        s = win_set[0]
-        w = win_set[1]
-        c = int((l - w) / s + 1)  # 处理后的帧数
-        RMS = zeros((c, 17), dtype=float)
-        for j in range(0, c):
-            RMS[j][0] = re_raw[int(j * s)][0]
-        for i in range(1, 17):
-            sw = self.slidwindow(re_raw[:, i], win_set)
-            for j in range(0, c):
+        def RMS(self, raw):
+            sw = self.slid_window(raw)
+            frame, width = shape(sw)
+            RMS = zeros(frame, dtype=float)
+            for j in range(0, frame):
                 rms_p = 0
-                for k in range(0,w):
-                    rms_p = rms_p + sw[j][k] ** 2
-                RMS[j][i] = (rms_p/w)**0.5
-        return RMS
+                for k in range(0, width):
+                    rms_p = rms_p + sw[j][k] ** 2  # 平方和
+                RMS[j] = (rms_p / width) ** 0.5  # 开方
+            return RMS
 
-    def AEMG(self,re_raw,win_set):
-        l = len(re_raw)
-        s = win_set[0]
-        w = win_set[1]
-        c = int((l - w) / s + 1)#处理后的帧数
-        AEMG = zeros((c, 17), dtype=float)
-        for j in range(0,c):
-            AEMG[j][0] = re_raw[int(j * s+s/2)][0]
-        # print('t:', AEMG[:,0])
-        for i in range(1,9):
-            sw = self.slidwindow(re_raw[:,i],win_set)
-            for j in range(0,c):
-                AEMG[j][i] = mean(sw[j,:])
-        print('last AEMG:',AEMG[c-1][16])
-        return AEMG
-        # print(AEMG)
+        def slid_window(self, raw):
+            # 一次传入re_raw的一列
+            length = len(raw)
+            step = self.win_set[0]
+            width = self.win_set[1]
+            frame = int((length - width) / step + 1)  # 处理后的帧数
+            sw = zeros((frame, width), dtype=float)  # 初始化矩阵，每行是一个时间窗
+            i = 0
+            while i < length - width + 1:
+                # 每行新建空数组，作为window
+                window = array([])
+                for j in range(0, width):
+                    # 每列从i添加到i+width
+                    window = append(window, raw[i + j])
+                # 生成sw矩阵
+                sw[int(i / step)] = window
+                i += step
+            return sw
+
+        def max_mean(self):
+            keyword = "Odau"
+            file_list = os.listdir(self.process_folder)
+            for file in file_list:
+                if "rms.txt" in file_list:
+                    print("已绘图")
+                    break
+                else:
+                    if keyword in file:
+                        print(file)
+                        data = pd.read_excel(self.process_folder + file, sheet_name="RMS")
+                        if self.upper_limb:
+                            col = {1: "RMS_1_三角肌前束",
+                                   2: "RMS_2_三角肌后束",
+                                   3: "RMS_3_肱二头肌",
+                                   4: "RMS_4_肱三头肌",
+                                   5: "RMS_5_桡侧腕屈肌",
+                                   6: "RMS_6_尺侧腕伸肌"}
+
+                        else:
+                            col = {1: "RMS_1_股直肌",
+                                   2: "RMS_2_股二头肌",
+                                   3: "RMS_3_半腱肌",
+                                   4: "RMS_4_股内侧肌",
+                                   5: "RMS_5_胫骨前肌",
+                                   6: "RMS_6_外侧腓肠肌"
+                                   }
+                        # ["time", "RMS_1_股直肌", "RMS_2_股二头肌", "RMS_3_半腱肌", "RMS_4_股内侧肌", "RMS_5_胫骨前肌", "RMS_6_外侧腓肠肌"]
+
+                        # 取最大的前40%的值，求平均
+                        frames = len(data)
+                        max_frames = int(0.1 * frames)
+                        rms_max = ["RMS_max", 0, 0, 0, 0, 0, 0]
+
+                        for i in range(1, 7):
+                            temp = data.iloc[data[col[i]].argsort()[-max_frames:]]
+                            # print("debug1",temp)
+                            rms_max[i] = mean(temp[col[i]])
+
+                            # print("debug2", rms_max)
+                        print(rms_max)
+
+if __name__ == '__main__':
+
+

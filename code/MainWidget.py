@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QApplication, QMessageBox, QDialog, QWidget
 from PySide2.QtUiTools import QUiLoader
 from pyqtgraph.Qt import QtCore
 import pyqtgraph as pg
-from EMGProcess import readData as rd
+# from EMGProcess import readData as rd
 from pymysql import *
 from new_user import NewUser
 from new_test import NewTest
@@ -37,6 +37,7 @@ class HomePage(QWidget):
     def init_plot(self):
         muscle = ['', '三角肌前束', '三角肌中束', '肱二头肌', '肱三头肌',
                   '腕屈肌', '腕伸肌', '指浅屈肌', '指伸肌']
+
         for i in range(1, 9):
             EMG_plot = getattr(self.ui, 'EMG_plot_0' + str(i))  # 不是很懂，但是能用
 
