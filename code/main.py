@@ -35,6 +35,48 @@ class EMGProcess(object):
         self.subject = subject
         print("Path:", folder)
 
+    def rename_test_file(self):
+        file_list = os.listdir(self.process_folder)
+        f = file_list[2]
+        print(f[0:26])
+        file_name = pd.read_excel(self.subject, dtype=str)
+        print(file_name)
+
+        # 遍历所有文件
+        if self.upper_limb:
+            motion_id_start = 0
+            motion_id_end = 7
+        else:
+            motion_id_start = 7
+            motion_id_end = 14
+
+        keyword = "Odau"
+        for file in file_list:
+            if "new_name.txt" in file_list:
+                print("已重命名")
+                break
+            else:
+                if keyword in file:
+                    print("file", file[-15:-12])
+                    file_id = file[-15:-12]
+                    # 遍历所有文件id
+                    for motion in range(motion_id_start, motion_id_end):
+                        for motion_pattern in range(1, 4):
+                            # print("motion:", motion)
+                            # print("motion_pattern:", motion_pattern)
+                            motion_id = file_name.iloc[motion, motion_pattern]
+                            # print("motion_id:", motion_id)
+                            if file_id == motion_id:
+                                dst_name = f[:-15] + file_name.iloc[motion, motion_pattern] + "_Odau_1" + \
+                                           file_name.columns[motion_pattern] + file_name.iloc[motion, 0] + ".xlsx"
+                                self.log_create("new_name", dst_name + "\n")
+
+                                if os.path.exists(self.process_folder + file):
+                                    os.rename(self.process_folder + file, self.process_folder + dst_name)
+                                    print("rename:", dst_name)
+                                else:
+                                    pass
+
     def save_as_high_ver(self):
         """
         源文件格式错误，另存为xlsx
@@ -303,25 +345,23 @@ class EMGProcess(object):
 
         self.save_as_high_ver()
 
-        # self.rename_test_file()
-        # # 2.肌电信号预处理，矫正零偏，计算RMS
-        # self.new_columns()
-        # # # 3. 插入图像
-        # self.plot_in_excel()
+        self.rename_test_file()
+        # 2.肌电信号预处理，矫正零偏，计算RMS
+        self.new_columns()
+        # # 3. 插入图像
+        self.plot_in_excel()
         # 4. 提取最大值
-        # self.max_mean()
+        self.max_mean()
 
 
 def main():
     # folder = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_140406"
     folder = r"D:\code\运动能力分析实验\0921wrj_2020_09_21_144822"
-    folder = r"D:\code\运动能力分析实验\0924wj_2020_09_24_200721"
-    folder = r"D:\code\运动能力分析实验\0923zw_2020_09_23_152448"
-    # folder = r"D:\code\运动能力分析实验\0922gxw_2020_09_22_192035"
-    folder = r"D:\code\运动能力分析实验\0921why_2020_09_21_090434"
+
+
     print("folder:", folder)
     subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
-    subject = r"D:\code\运动能力分析实验\王晶.xlsx"
+    # subject = r"D:\code\运动能力分析实验\王晶.xlsx"
     # subject = r"D:\code\运动能力分析实验\曾威.xlsx"
     # # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
     # subject = r"D:\code\运动能力分析实验\肖凌云.xlsx"
