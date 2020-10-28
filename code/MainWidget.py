@@ -70,9 +70,9 @@ class HomePage(QWidget):
 
     # 新建病历
     def new_user(self):
-        # new_user = NewUser()
-        # new_user.ui.show()
-        # new_user.ui.exec_()
+        new_user = NewUser()
+        new_user.ui.show()
+        new_user.ui.exec_()
         sql = "select max(user_id) from t_user"
         self.cursor.execute(sql)
         result = self.cursor.fetchone()
