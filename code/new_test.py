@@ -300,8 +300,8 @@ class NewTest(QDialog):
                 emg_4 = float(data["EMG_4"][r])
                 emg_5 = float(data["EMG_5"][r])
                 emg_6 = float(data["EMG_6"][r])
-                rms_1 = ep.rms(emg_1)
-                print(rms_1)
+                # rms_1 = ep.rms(emg_1)
+                # print(rms_1)
 
                 values = (test_time, int(self.user_id), frame, time, emg_1, emg_2, emg_3, emg_4, emg_5, emg_6)
                 # 7.执行sql语句，导入数据

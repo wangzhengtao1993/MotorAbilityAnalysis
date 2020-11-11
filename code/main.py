@@ -362,10 +362,12 @@ def main():
     print("folder:", folder)
     subject = r"D:\code\运动能力分析实验\邬如靖.xlsx"
     subject = r"D:\code\运动能力分析实验\黄臻.xlsx"
-    subject = r"D:\code\运动能力分析实验\孔金震.xlsx"
-    # subject = r"D:\code\运动能力分析实验\王晶.xlsx"
-    # subject = r"D:\code\运动能力分析实验\曾威.xlsx"
-    # # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
+    subject = r"D:\code\运动能力分析实验\丁远涛.xlsx"
+    subject = r"D:\code\运动能力分析实验\王晶.xlsx"
+    subject = r"D:\code\运动能力分析实验\曾威.xlsx"
+    # subject = r"D:\code\运动能力分析实验\王怀宇.xlsx"
+    # subject = r"D:\code\运动能力分析实验\顾晓巍.xlsx"
+    # subject = r"D:\code\运动能力分析实验\霍宇飞.xlsx"
     # subject = r"D:\code\运动能力分析实验\肖凌云.xlsx"
     root = tk.Tk()
     root.withdraw()
