@@ -335,6 +335,6 @@ class NewTest(QDialog):
 
 if __name__ == '__main__':
     app = QApplication([])
-    new_test = NewTest(1)
+    new_test = NewTest(21)
     new_test.ui.show()
     new_test.ui.exec_()

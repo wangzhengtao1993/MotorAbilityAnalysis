@@ -21,6 +21,7 @@ class HomePage(QWidget):
         print("database motor_ability_analysis connected")
         # 加载主页ui
         self.ui = QUiLoader().load('ui_design/main.ui')
+        # self.ui = QUiLoader().load('ui_design/main2.ui')
         # 初始化绘图窗口
         self.init_plot()
         self.ui.reset_plot_btn.clicked.connect(self.init_plot)
@@ -31,7 +32,7 @@ class HomePage(QWidget):
         # 槽函数
         self.ui.new_user_btn.clicked.connect(self.new_user)
         self.ui.open_user_btn.clicked.connect(self.open_user)
-        self.ui.plot_btn.clicked.connect(self.multpolt)
+        # self.ui.plot_btn.clicked.connect(self.multpolt)
         self.ui.new_test_btn.clicked.connect(self.new_test)
         # self.ui.window_setting_btn.clicked.connect(self.showWindowSetting)
 

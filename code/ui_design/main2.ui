@@ -21,12 +21,6 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QGroupBox" name="groupBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
           <property name="minimumSize">
            <size>
             <width>200</width>
@@ -34,184 +28,189 @@
            </size>
           </property>
           <property name="title">
-           <string>患者信息</string>
+           <string/>
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="10" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>大臂围长（cm）：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="l_name">
-             <property name="text">
-              <string>张三</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>出生年：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QLabel" name="l_height">
-             <property name="text">
-              <string>170</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
             <widget class="QLabel" name="label_9">
              <property name="text">
               <string>腰围（cm）：</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>性别：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="0">
-            <widget class="QLabel" name="label_16">
-             <property name="text">
-              <string>大腿围长（cm）：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="l_user_id">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLabel" name="l_year_of_birth">
-             <property name="text">
-              <string>66</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="l_gender">
-             <property name="text">
-              <string>男</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>姓名：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>ID：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>身高（cm）：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
+           <item row="9" column="1">
             <widget class="QLabel" name="l_weight">
              <property name="text">
               <string>0</string>
              </property>
             </widget>
            </item>
-           <item row="11" column="0">
-            <widget class="QLabel" name="label_15">
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>小臂围长（cm）：</string>
+              <string>出生年：</string>
              </property>
             </widget>
            </item>
-           <item row="8" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>体重（kg）：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="13" column="0">
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>小腿围长（cm）：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="14" column="0">
-            <widget class="QLineEdit" name="le_uesr_id"/>
-           </item>
-           <item row="14" column="1">
-            <widget class="QPushButton" name="open_user_btn">
-             <property name="text">
-              <string>打开病历</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="1">
-            <widget class="QLabel" name="l_waistline">
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="1">
-            <widget class="QLabel" name="l_upperarm">
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="1">
-            <widget class="QLabel" name="l_forearm">
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="1">
+           <item row="13" column="1">
             <widget class="QLabel" name="l_thigh">
              <property name="text">
               <string>0</string>
              </property>
             </widget>
            </item>
-           <item row="13" column="1">
+           <item row="14" column="1">
             <widget class="QLabel" name="l_shank">
              <property name="text">
               <string>0</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>ID：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="1">
+            <widget class="QLabel" name="l_forearm">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>小腿围长（cm）：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>大臂围长（cm）：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>体重（kg）：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLabel" name="l_height">
+             <property name="text">
+              <string>170</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QLabel" name="l_waistline">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="0">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>大腿围长（cm）：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="l_gender">
+             <property name="text">
+              <string>男</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="l_name">
+             <property name="text">
+              <string>张三</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>身高（cm）：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLabel" name="l_year_of_birth">
+             <property name="text">
+              <string>66</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLabel" name="l_handedness">
+             <property name="text">
+              <string>右</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="l_user_id">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>性别：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>姓名：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
             <widget class="QLabel" name="label_18">
              <property name="text">
               <string>惯用侧：</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="1">
-            <widget class="QLabel" name="l_handedness">
+           <item row="12" column="0">
+            <widget class="QLabel" name="label_15">
              <property name="text">
-              <string>右</string>
+              <string>小臂围长（cm）：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="1">
+            <widget class="QLabel" name="l_upperarm">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="2">
+            <widget class="QLabel" name="label_13">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>患者信息</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -219,22 +218,43 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="new_user_btn">
-            <property name="text">
-             <string>新建病历</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QPushButton" name="new_user_btn">
+          <property name="text">
+           <string>新建病历</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="open_user_btn">
+          <property name="text">
+           <string>打开病历</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout"/>
         </item>
        </layout>
       </item>
       <item>
        <widget class="QPushButton" name="new_test_btn">
         <property name="text">
-         <string>新建测试</string>
+         <string>导入测试文件</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_12">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>绘图设置</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -311,12 +331,12 @@
         </item>
         <item>
          <property name="text">
-          <string>MVC</string>
+          <string>被动</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>被动</string>
+          <string>最大等长收缩</string>
          </property>
         </item>
        </widget>
@@ -355,69 +375,7 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="3" column="1">
-         <widget class="QComboBox" name="window_width_2">
-          <item>
-           <property name="text">
-            <string>100</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>200</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>500</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1000</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="window_step_2">
-          <item>
-           <property name="text">
-            <string>100</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>200</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>500</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1000</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>窗口宽度(ms)：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>窗口步长(ms)：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
+        <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -458,7 +416,7 @@
            <widget class="QComboBox" name="plot_type">
             <item>
              <property name="text">
-              <string>原始信号</string>
+              <string>整流信号</string>
              </property>
             </item>
             <item>
@@ -471,13 +429,6 @@
               <string>平均值</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="plot_btn">
-            <property name="text">
-             <string>载入数据并绘图</string>
-            </property>
            </widget>
           </item>
           <item>
@@ -496,7 +447,7 @@
     <item row="1" column="1">
      <widget class="QGroupBox" name="groupBox_2">
       <property name="title">
-       <string>GroupBox</string>
+       <string/>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="2" column="0">
@@ -506,7 +457,14 @@
         <widget class="PlotWidget" name="EMG_plot_04" native="true"/>
        </item>
        <item row="1" column="0">
-        <widget class="PlotWidget" name="EMG_plot_03" native="true"/>
+        <widget class="PlotWidget" name="EMG_plot_03" native="true">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </widget>
        </item>
        <item row="2" column="1">
         <widget class="PlotWidget" name="EMG_plot_06" native="true"/>
